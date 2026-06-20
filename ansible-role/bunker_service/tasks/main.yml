@@ -1,19 +1,50 @@
 ---
-- name: Ensure configs directory exists for bunker
-  ansible.builtin.file:
-    path: "{{ bunker_service_home }}/.config/containers/systemd/configs"
-    state: directory
-    owner: "{{ bunker_service_user }}"
-    group: "{{ bunker_service_user }}"
-    mode: "0755"
+# Bunkerweb service deployment — fully self-contained
+# Receives: service_name, service_user, service_uid, service_home, service_repo
 
-- name: Deploy Bunkerweb environment files
+- name: Deploy static Quadlet files
+  ansible.builtin.copy:
+    src: "{{ service_repo }}/quadlets/{{ item }}"
+    dest: "{{ service_home }}/.config/containers/systemd/"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0644'
+  loop:
+    - bunker-nginx.container
+    - bunker-scheduler.container
+    - bw-data.volume
+    - bw-nginx-data.volume
+    - shared-network.network
+    - proxy.pod
+    - promtail-proxy.pod
+    - promtail-proxy.container
+
+- name: Ensure configs directory exists
+  ansible.builtin.file:
+    path: "{{ service_home }}/.config/containers/systemd/configs"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0755'
+
+- name: Deploy config files
+  ansible.builtin.copy:
+    src: "{{ service_repo }}/quadlets/configs/{{ item }}"
+    dest: "{{ service_home }}/.config/containers/systemd/configs/{{ item }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0644'
+  loop:
+    - promtail-proxy.yaml
+    - json_analytics.conf
+
+- name: Template Bunkerweb environment files
   ansible.builtin.template:
     src: "{{ item }}.j2"
-    dest: "{{ bunker_service_home }}/.config/containers/systemd/configs/{{ item }}"
-    owner: "{{ bunker_service_user }}"
-    group: "{{ bunker_service_user }}"
-    mode: "0600"
+    dest: "{{ service_home }}/.config/containers/systemd/configs/{{ item }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0600'
   loop:
     - bunkerized_nginx.env
     - json_analytics.env
