@@ -12,8 +12,6 @@
   loop:
     - bunker-nginx.container
     - bunker-scheduler.container
-    - bw-data.volume
-    - bw-nginx-data.volume
     - shared-network.network
     - proxy.pod
     - promtail-proxy.pod
