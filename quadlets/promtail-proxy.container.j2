@@ -1,12 +1,12 @@
 [Container]
-Image=docker.io/grafana/promtail:3
+Image={{ bunker_promtail_image }}
 ContainerName=promtail-proxy
 Volume=./configs/promtail-proxy.yaml:/etc/promtail/promtail.yaml:ro
 Volume=/var/log/journal/:/var/log/journal/:ro
 Volume=/run/log/journal/:/run/log/journal/:ro
 Volume=/etc/machine-id:/etc/machine-id:ro
 Pod=promtail-proxy.pod
-AutoUpdate=registry
+AutoUpdate={{ bunker_service_auto_update }}
 SecurityLabelDisable=true
 
 [Install]
