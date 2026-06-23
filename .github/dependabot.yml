@@ -6,5 +6,3 @@ updates:
       interval: "weekly"
     target-branch: "dev"
     open-pull-requests-limit: 10
-
-
