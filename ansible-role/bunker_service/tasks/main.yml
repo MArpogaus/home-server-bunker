@@ -34,7 +34,15 @@
     group: "{{ service_user }}"
     mode: '0755'
 
-- name: Deploy config files
+- name: Template promtail config
+  ansible.builtin.template:
+    src: "{{ service_repo }}/quadlets/configs/promtail-proxy.yaml.j2"
+    dest: "{{ service_home }}/.config/containers/systemd/configs/promtail-proxy.yaml"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0644'
+
+- name: Deploy static config files
   ansible.builtin.copy:
     src: "{{ service_repo }}/quadlets/configs/{{ item }}"
     dest: "{{ service_home }}/.config/containers/systemd/configs/{{ item }}"
@@ -42,7 +50,6 @@
     group: "{{ service_user }}"
     mode: '0644'
   loop:
-    - promtail-proxy.yaml
     - json_analytics.conf
 
 - name: Template Bunkerweb environment files
