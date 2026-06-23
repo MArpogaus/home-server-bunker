@@ -4,3 +4,14 @@ bunker_nginx_image: "docker.io/bunkerity/bunkerweb:1.6.11"
 bunker_scheduler_image: "docker.io/bunkerity/bunkerweb-scheduler:1.6.11"
 bunker_promtail_image: "docker.io/grafana/promtail:3"
 bunker_loki_url: "http://10.0.2.2:3100"
+
+# Defaults for vars with inline Jinja defaults (documentation only)
+# These are overridable in secrets/vars.yml but have sensible defaults
+# bunker_server_name: "REQUIRED"
+# bunker_whitelist_country: "DE CH AT"
+# bunker_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
+# bunker_use_modsecurity: "no"
+# bunker_limit_req_rate: "3r/s"
+# bunker_auto_lets_encrypt: "yes"
+# bunker_max_client_size: "10G"
+bunker_nextcloud_upstream_url: "http://nextcloud-web:80"
