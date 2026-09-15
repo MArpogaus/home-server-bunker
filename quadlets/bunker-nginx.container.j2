@@ -3,7 +3,6 @@ Image={{ bunker_nginx_image }}
 ContainerName=bunker-nginx
 Pod=proxy.pod
 EnvironmentFile=./configs/bunkerized_nginx.env
-Volume=./configs/json_analytics.conf:/etc/nginx/conf.d/json_analytics.conf:ro,Z
 PodmanArgs={{ bunker_service_nginx_extra_args }}
 AutoUpdate={{ bunker_service_auto_update }}
 # No HealthOnFailure here: podman rejects it unless the quadlet also sets
