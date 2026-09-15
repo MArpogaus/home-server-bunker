@@ -4,8 +4,8 @@ bunker_nginx_image: "docker.io/bunkerity/bunkerweb:1.6.11"
 bunker_scheduler_image: "docker.io/bunkerity/bunkerweb-scheduler:1.6.11"
 
 # Resource ceilings for an 8 GB host
-bunker_service_nginx_extra_args: "--memory=768M"
-bunker_service_scheduler_extra_args: "--memory=512M"
+bunker_service_nginx_extra_args: "--memory=768M --pids-limit=512 --security-opt=no-new-privileges"
+bunker_service_scheduler_extra_args: "--memory=512M --pids-limit=512 --security-opt=no-new-privileges"
 
 # Rootless users have separate container networks, so the Nextcloud pod is
 # reached through its host-published port.
