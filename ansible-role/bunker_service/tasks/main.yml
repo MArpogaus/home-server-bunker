@@ -1,30 +1,6 @@
 ---
 # Bunkerweb service deployment — fully self-contained
-# Receives: service_name, service_user, service_uid, service_home, service_repo
-
-- name: Deploy static Quadlet files
-  ansible.builtin.copy:
-    src: "{{ service_repo }}/quadlets/{{ item }}"
-    dest: "{{ service_home }}/.config/containers/systemd/"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0644'
-  loop:
-    - shared-network.network
-    - proxy.pod
-    - promtail-proxy.pod
-
-- name: Template container Quadlet files
-  ansible.builtin.template:
-    src: "{{ service_repo }}/quadlets/{{ item }}.j2"
-    dest: "{{ service_home }}/.config/containers/systemd/{{ item }}"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0644'
-  loop:
-    - bunker-nginx.container
-    - bunker-scheduler.container
-    - promtail-proxy.container
+# Receives: service_name, service_user, service_home, service_repo
 
 - name: Ensure configs directory exists
   ansible.builtin.file:
@@ -34,44 +10,46 @@
     group: "{{ service_user }}"
     mode: '0755'
 
-- name: Template promtail config
-  ansible.builtin.template:
-    src: "{{ service_repo }}/quadlets/configs/promtail-proxy.yaml.j2"
-    dest: "{{ service_home }}/.config/containers/systemd/configs/promtail-proxy.yaml"
+- name: Deploy static Quadlet files
+  ansible.builtin.copy:
+    src: "{{ service_repo }}/quadlets/proxy.pod"
+    dest: "{{ service_home }}/.config/containers/systemd/"
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: '0644'
+  notify: proxy quadlets changed
+
+- name: Template container Quadlet files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ service_home }}/.config/containers/systemd/{{ item | basename | replace('.j2', '') }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0644'
+  loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2') }}"
+  notify: proxy quadlets changed
 
 - name: Deploy static config files
   ansible.builtin.copy:
-    src: "{{ service_repo }}/quadlets/configs/{{ item }}"
-    dest: "{{ service_home }}/.config/containers/systemd/configs/{{ item }}"
+    src: "{{ service_repo }}/quadlets/configs/json_analytics.conf"
+    dest: "{{ service_home }}/.config/containers/systemd/configs/"
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: '0644'
-  loop:
-    - json_analytics.conf
+  notify: proxy quadlets changed
 
-- name: Template Bunkerweb environment files
+- name: Template Bunkerweb environment file
   ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "{{ service_home }}/.config/containers/systemd/configs/{{ item }}"
+    src: bunkerized_nginx.env.j2
+    dest: "{{ service_home }}/.config/containers/systemd/configs/bunkerized_nginx.env"
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: '0600'
-  loop:
-    - bunkerized_nginx.env
-    - json_analytics.env
+  notify: proxy quadlets changed
 
-- name: Reload systemd user daemon
-  ansible.builtin.command:
-    cmd: "machinectl shell {{ service_user }}@ /usr/bin/systemctl --user daemon-reload"
-  changed_when: true
-  failed_when: false
+- name: Apply quadlet changes now
+  ansible.builtin.meta: flush_handlers
 
-- name: Restart user manager (triggers Quadlet generator and starts containers)
-  ansible.builtin.systemd:
-    name: "user@{{ service_uid }}.service"
-    state: restarted
-    scope: system
-  failed_when: false
+- name: Ensure proxy pod is running
+  ansible.builtin.command: systemctl --user -M proxy@ start proxy-pod.service  # noqa: command-instead-of-module
+  changed_when: false

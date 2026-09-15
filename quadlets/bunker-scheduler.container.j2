@@ -3,8 +3,8 @@ Image={{ bunker_scheduler_image }}
 ContainerName=bunker-scheduler
 Pod=proxy.pod
 EnvironmentFile=./configs/bunkerized_nginx.env
-EnvironmentFile=./configs/json_analytics.env
 Volume=bw-data:/data:Z
+PodmanArgs={{ bunker_service_scheduler_extra_args }}
 AutoUpdate={{ bunker_service_auto_update }}
 
 [Service]

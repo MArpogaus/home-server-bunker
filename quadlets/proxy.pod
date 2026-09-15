@@ -1,9 +1,4 @@
-[Unit]
-Wants=shared-network-network.service
-After=shared-network-network.service
-
 [Pod]
 PodName=proxy
-Network=shared-network
 PublishPort=80:8080/tcp
 PublishPort=443:8443/tcp

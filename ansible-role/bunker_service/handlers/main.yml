@@ -1,0 +1,10 @@
+---
+- name: Reload proxy quadlets
+  ansible.builtin.command: systemctl --user -M proxy@ daemon-reload  # noqa: command-instead-of-module
+  changed_when: true
+  listen: proxy quadlets changed
+
+- name: Restart proxy pod
+  ansible.builtin.command: systemctl --user -M proxy@ restart proxy-pod.service  # noqa: command-instead-of-module
+  changed_when: true
+  listen: proxy quadlets changed

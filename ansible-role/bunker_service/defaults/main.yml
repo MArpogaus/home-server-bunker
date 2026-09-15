@@ -2,16 +2,19 @@
 bunker_service_auto_update: "registry"
 bunker_nginx_image: "docker.io/bunkerity/bunkerweb:1.6.11"
 bunker_scheduler_image: "docker.io/bunkerity/bunkerweb-scheduler:1.6.11"
-bunker_promtail_image: "docker.io/grafana/promtail:3"
-bunker_loki_url: "http://10.0.2.2:3100"
 
-# Defaults for vars with inline Jinja defaults (documentation only)
-# These are overridable in secrets/vars.yml but have sensible defaults
-# bunker_server_name: "REQUIRED"
-# bunker_whitelist_country: "DE CH AT"
-# bunker_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
-# bunker_use_modsecurity: "no"
-# bunker_limit_req_rate: "3r/s"
-# bunker_auto_lets_encrypt: "yes"
-# bunker_max_client_size: "10G"
-bunker_nextcloud_upstream_url: "http://nextcloud-web:80"
+# Resource ceilings for an 8 GB host
+bunker_service_nginx_extra_args: "--memory=768M"
+bunker_service_scheduler_extra_args: "--memory=512M"
+
+# Rootless users have separate container networks, so the Nextcloud pod is
+# reached through its host-published port.
+bunker_nextcloud_upstream_url: "http://host.containers.internal:8080"
+
+# Required, no default: bunker_server_name, bunker_letsencrypt_email
+bunker_whitelist_country: "DE CH AT"
+bunker_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
+bunker_use_modsecurity: "no"
+bunker_limit_req_rate: "3r/s"
+bunker_auto_lets_encrypt: "yes"
+bunker_max_client_size: "10G"
