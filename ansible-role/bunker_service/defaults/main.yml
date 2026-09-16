@@ -13,30 +13,30 @@ bunker_service_scheduler_extra_args: "--memory=512M --pids-limit=512 --security-
 # directive, which never consults /etc/hosts where podman puts that name.
 # 169.254.1.2 is the address pasta assigns to the host; override if yours
 # differs (podman exec <container> getent hosts host.containers.internal).
-bunker_host_address: "169.254.1.2"
-bunker_nextcloud_upstream_url: "http://{{ bunker_host_address }}:8080"
+bunker_service_host_address: "169.254.1.2"
+bunker_service_nextcloud_upstream_url: "http://{{ bunker_service_host_address }}:8080"
 
-# Required, no default: bunker_server_name, bunker_letsencrypt_email
-bunker_whitelist_country: "DE CH AT"
+# Required, no default: bunker_service_server_name, bunker_service_letsencrypt_email
+bunker_service_whitelist_country: "DE CH AT"
 # Loopback has no country, so the geo whitelist would otherwise drop local
 # health checks without answering them at all.
-bunker_whitelist_ip: "127.0.0.1"
+bunker_service_whitelist_ip: "127.0.0.1"
 
 # BunkerWeb defaults DNS_RESOLVERS to 127.0.0.11, which is Docker's embedded
 # DNS and does not exist under rootless Podman. nginx then fails every
 # upstream lookup with "Connection refused while resolving" and answers
 # nothing at all. pasta puts the real resolvers in the pod's resolv.conf.
-bunker_dns_resolvers: "169.254.1.1 10.0.2.3"
-bunker_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
-bunker_use_modsecurity: "no"
-bunker_limit_req_rate: "3r/s"
-bunker_auto_lets_encrypt: "yes"
-# Mutually exclusive with bunker_auto_lets_encrypt: BunkerWeb tries the
+bunker_service_dns_resolvers: "169.254.1.1 10.0.2.3"
+bunker_service_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
+bunker_service_use_modsecurity: "no"
+bunker_service_limit_req_rate: "3r/s"
+bunker_service_auto_lets_encrypt: "yes"
+# Mutually exclusive with bunker_service_auto_lets_encrypt: BunkerWeb tries the
 # letsencrypt plugin first and does not fall through to selfsigned, so ACME
 # must be "no" for this to have any effect.
 # Serve a self-signed certificate when Let's Encrypt cannot issue one,
 # which is the case before DNS points at the host, and always in the test
 # VM. Off by default so a real deployment fails loudly instead of quietly
 # serving an untrusted certificate.
-bunker_generate_self_signed_ssl: "no"
-bunker_max_client_size: "10G"
+bunker_service_generate_self_signed_ssl: "no"
+bunker_service_max_client_size: "10G"

@@ -23,17 +23,17 @@ directive, which never consults `/etc/hosts` where podman puts that name.
 
 | Variable | Default | Controls |
 |---|---|---|
-| `bunker_server_name` | required | Public hostname |
-| `bunker_letsencrypt_email` | required | ACME account |
-| `bunker_host_address` | `169.254.1.2` | The host as seen from the pod |
-| `bunker_nextcloud_upstream_url` | `http://{{ bunker_host_address }}:8080` | Upstream |
-| `bunker_dns_resolvers` | `169.254.1.1 10.0.2.3` | nginx resolvers (not Docker's 127.0.0.11) |
-| `bunker_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
-| `bunker_generate_self_signed_ssl` | `no` | Fallback cert; mutually exclusive with ACME |
-| `bunker_whitelist_country` | `DE CH AT` | Geo allowlist |
-| `bunker_limit_req_rate` | `3r/s` | Rate limit |
-| `bunker_use_modsecurity` | `no` | ModSecurity (RAM heavy) |
-| `bunker_max_client_size` | `10G` | Upload limit |
+| `bunker_service_server_name` | required | Public hostname |
+| `bunker_service_letsencrypt_email` | required | ACME account |
+| `bunker_service_host_address` | `169.254.1.2` | The host as seen from the pod |
+| `bunker_service_nextcloud_upstream_url` | `http://{{ bunker_service_host_address }}:8080` | Upstream |
+| `bunker_service_dns_resolvers` | `169.254.1.1 10.0.2.3` | nginx resolvers (not Docker's 127.0.0.11) |
+| `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
+| `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; mutually exclusive with ACME |
+| `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
+| `bunker_service_limit_req_rate` | `3r/s` | Rate limit |
+| `bunker_service_use_modsecurity` | `no` | ModSecurity (RAM heavy) |
+| `bunker_service_max_client_size` | `10G` | Upload limit |
 | `bunker_service_*_extra_args` | `--memory=...` | Per-container ceilings |
 | `bunker_service_auto_update` | `registry` | Podman auto-update |
 
