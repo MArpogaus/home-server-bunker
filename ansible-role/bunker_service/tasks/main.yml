@@ -29,15 +29,6 @@
   loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2') }}"
   notify: proxy quadlets changed
 
-- name: Deploy static config files
-  ansible.builtin.copy:
-    src: "{{ service_repo }}/quadlets/configs/json_analytics.conf"
-    dest: "{{ service_home }}/.config/containers/systemd/configs/"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0644'
-  notify: proxy quadlets changed
-
 - name: Template Bunkerweb environment file
   ansible.builtin.template:
     src: bunkerized_nginx.env.j2
