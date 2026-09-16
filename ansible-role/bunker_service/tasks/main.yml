@@ -2,7 +2,7 @@
 # Bunkerweb service deployment — fully self-contained
 # Receives: service_name, service_user, service_home, service_repo
 
-- name: Ensure configs directory exists
+- name: Ensure service directories exist
   ansible.builtin.file:
     path: "{{ service_home }}/.config/containers/systemd/configs"
     state: directory
@@ -19,7 +19,7 @@
     mode: '0644'
   notify: proxy quadlets changed
 
-- name: Template container Quadlet files
+- name: Template container Quadlets
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ service_home }}/.config/containers/systemd/{{ item | basename | replace('.j2', '') }}"
@@ -29,7 +29,7 @@
   loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2') }}"
   notify: proxy quadlets changed
 
-- name: Template Bunkerweb environment file
+- name: Deploy config files
   ansible.builtin.template:
     src: bunkerized_nginx.env.j2
     dest: "{{ service_home }}/.config/containers/systemd/configs/bunkerized_nginx.env"

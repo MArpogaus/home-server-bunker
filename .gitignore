@@ -126,9 +126,11 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,emacs
 
-# Additional patterns for service-bunker
+# Ansible
+*.retry
+.ansible/
 
-.env
-configs/*.env
-!configs/*.env.example
+# Editor and OS noise
+*.bak
+*.backup
 *.log

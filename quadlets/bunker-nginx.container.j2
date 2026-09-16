@@ -1,5 +1,9 @@
+[Unit]
+Requires=bunker-scheduler.service
+After=bunker-scheduler.service
+
 [Container]
-Image={{ bunker_nginx_image }}
+Image={{ bunker_service_nginx_image }}
 ContainerName=bunker-nginx
 Pod=proxy.pod
 EnvironmentFile=./configs/bunkerized_nginx.env
@@ -11,10 +15,6 @@ AutoUpdate={{ bunker_service_auto_update }}
 [Service]
 Restart=on-failure
 RestartSec=10s
-
-[Unit]
-Requires=bunker-scheduler.service
-After=bunker-scheduler.service
 
 [Install]
 WantedBy=default.target
