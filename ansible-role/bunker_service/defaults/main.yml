@@ -8,13 +8,20 @@ bunker_service_nginx_extra_args: "--memory=768M --pids-limit=512 --security-opt=
 bunker_service_scheduler_extra_args: "--memory=512M --pids-limit=512 --security-opt=no-new-privileges"
 
 # Rootless users have separate container networks, so the Nextcloud pod is
-# reached through its host-published port. It has to be an IP, not
-# host.containers.internal: nginx resolves upstreams through the `resolver`
-# directive, which never consults /etc/hosts where podman puts that name.
-# 169.254.1.2 is the address pasta assigns to the host; override if yours
-# differs (podman exec <container> getent hosts host.containers.internal).
-bunker_service_host_address: "169.254.1.2"
-bunker_service_nextcloud_upstream_url: "http://{{ bunker_service_host_address }}:8080"
+# reached through a host-published port. Two details make this fiddly:
+#
+#   * It must be an address, not host.containers.internal. nginx resolves
+#     upstreams through its `resolver` directive, which never consults
+#     /etc/hosts where podman puts that name.
+#   * pasta's own host.containers.internal (169.254.1.2) reaches the host's
+#     routable addresses but NOT its loopback, so a loopback-bound port is
+#     invisible through it. This address is mapped to the host's loopback by
+#     the --map-host-loopback option on proxy.pod, which lets Nextcloud publish
+#     on 127.0.0.1 instead of every interface.
+#
+# Any free link-local address works; it exists only inside this pod.
+bunker_service_host_loopback_address: "169.254.1.3"
+bunker_service_nextcloud_upstream_url: "http://{{ bunker_service_host_loopback_address }}:8080"
 
 # Required, no default: bunker_service_server_name, bunker_service_letsencrypt_email
 bunker_service_whitelist_country: "DE CH AT"

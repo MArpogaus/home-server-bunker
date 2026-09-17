@@ -10,15 +10,6 @@
     group: "{{ service_user }}"
     mode: '0755'
 
-- name: Deploy static Quadlet files
-  ansible.builtin.copy:
-    src: "{{ service_repo }}/quadlets/proxy.pod"
-    dest: "{{ service_home }}/.config/containers/systemd/"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0644'
-  notify: proxy quadlets changed
-
 - name: Template container Quadlets
   ansible.builtin.template:
     src: "{{ item }}"
@@ -26,7 +17,8 @@
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: '0644'
-  loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2') }}"
+  loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2')
+            + [service_repo ~ '/quadlets/proxy.pod'] }}"
   notify: proxy quadlets changed
 
 - name: Deploy config files

@@ -1,4 +1,9 @@
 [Pod]
 PodName=proxy
+# pasta's default host.containers.internal (169.254.1.2) reaches the host's
+# routable addresses only, so a loopback-bound upstream is invisible through it.
+# This second address maps to the host's loopback, which is how the proxy
+# reaches Nextcloud without that port being published on any real interface.
+Network=pasta:--map-host-loopback,{{ bunker_service_host_loopback_address }}
 PublishPort=80:8080/tcp
 PublishPort=443:8443/tcp
