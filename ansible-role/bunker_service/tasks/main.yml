@@ -1,7 +1,4 @@
 ---
-# Bunkerweb service deployment — fully self-contained
-# Receives: service_name, service_user, service_home, service_repo
-
 - name: Ensure service directories exist
   ansible.builtin.file:
     path: "{{ service_home }}/.config/containers/systemd/configs"
