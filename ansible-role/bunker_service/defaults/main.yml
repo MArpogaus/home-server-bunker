@@ -28,8 +28,36 @@ bunker_service_whitelist_ip: "127.0.0.1"
 # nothing at all. pasta puts the real resolvers in the pod's resolv.conf.
 bunker_service_dns_resolvers: "169.254.1.1 10.0.2.3"
 bunker_service_api_whitelist_ip: "127.0.0.1 10.0.0.0/8"
-bunker_service_use_modsecurity: "no"
+# On, but logging only. The CRS will flag ordinary Nextcloud traffic until it
+# is tuned, so run it in DetectionOnly, read what it would have blocked, then
+# switch the rule engine to "On" once the log is quiet.
+#   journalctl _UID=1001 | grep -i modsecurity
+bunker_service_use_modsecurity: "yes"
+bunker_service_modsecurity_sec_rule_engine: "DetectionOnly"
 bunker_service_limit_req_rate: "3r/s"
+
+# A single global rate limit throttles a real Nextcloud client: the desktop
+# sync, the text editor and preview loading all burst well above 3r/s on paths
+# that are not attacks. These per-URL limits come from running the previous
+# deployment in anger; drop one only if you know why it was there.
+bunker_service_limit_req_urls:
+  - {url: /apps, rate: 5r/s}
+  - {url: /apps/text/session/sync, rate: 8r/s}
+  - {url: /core/preview, rate: 5r/s}
+  - {url: /remote.php/, rate: 8r/s}
+  - {url: /push/ws, rate: 8r/s}
+  - {url: /apps/memories/api/, rate: 8r/s}
+
+# Nextcloud answers 401 routinely during WebDAV auth, and 429 when a client
+# backs off. Counting those as bad behaviour gets real clients banned, so the
+# list is narrowed to codes that actually indicate abuse.
+bunker_service_bad_behavior_status_codes: "400 401 403 405 444"
+
+# Required when USE_MODSECURITY is on: without the exclusions the CRS blocks
+# ordinary Nextcloud traffic.
+bunker_service_modsecurity_crs_plugins: "nextcloud-rule-exclusions"
+
+bunker_service_log_level: "notice"
 bunker_service_auto_lets_encrypt: "yes"
 # Mutually exclusive with bunker_service_auto_lets_encrypt: BunkerWeb tries the
 # letsencrypt plugin first and does not fall through to selfsigned, so ACME
