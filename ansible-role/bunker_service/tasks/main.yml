@@ -1,4 +1,12 @@
 ---
+- name: Assert the ntfy site has a password
+  ansible.builtin.assert:
+    that: bunker_service_ntfy_auth_password | length > 0
+    fail_msg: >-
+      bunker_service_ntfy_server_name publishes ntfy on the internet. Set
+      bunker_service_ntfy_auth_password in secrets/vars.yml as well.
+  when: bunker_service_ntfy_server_name | length > 0
+
 - name: Ensure service directories exist
   ansible.builtin.file:
     path: "{{ service_home }}/.config/containers/systemd/configs"

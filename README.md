@@ -45,6 +45,9 @@ here.
 | `bunker_service_letsencrypt_email` | required | ACME account |
 | `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as seen from the pod |
 | `bunker_service_nextcloud_upstream_url` | derived | Upstream |
+| `bunker_service_ntfy_server_name` | `""` | Second site for ntfy; empty leaves it out |
+| `bunker_service_ntfy_upstream_url` | derived | ntfy in the monitoring pod |
+| `bunker_service_ntfy_auth_user` / `_password` | `ntfy` / required with the name | Basic auth on that site |
 | `bunker_service_dns_resolvers` | `169.254.1.1 10.0.2.3` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
@@ -60,6 +63,26 @@ here.
 | `bunker_service_max_client_size` | `10G` | Upload limit |
 | `bunker_service_*_extra_args` | `--memory=...` | Per-container ceilings |
 | `bunker_service_auto_update` | `registry` | Podman auto-update |
+
+### The ntfy site
+
+Alerts must reach the phone while it is away from home, so ntfy gets a second
+site rather than a path under Nextcloud: ntfy serves its API and its web app
+from the root and does not work under a subpath.
+
+```yaml
+bunker_service_ntfy_server_name: ntfy.example.org
+bunker_service_ntfy_auth_password: "<a long random string>"
+```
+
+The name needs a DNS record of its own, because BunkerWeb requests a
+certificate for it. Basic auth is enforced here rather than in ntfy: the phone
+app sends the same header either way, and ntfy then needs no user database and
+no volume. `401` is left out of the bad-behavior codes for this site, because
+basic auth answers `401` before the phone sends its credentials.
+
+Alertmanager reaches ntfy inside the monitoring pod and never passes through
+the proxy, so alerts still arrive when the proxy is down.
 
 ### Why these defaults
 
