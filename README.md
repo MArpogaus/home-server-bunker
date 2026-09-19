@@ -11,10 +11,10 @@ pod under the `proxy` user.
 
 | Container | Image | Purpose |
 |---|---|---|
-| bunker-nginx | bunkerity/bunkerweb:1.6.11 | Proxy, WAF, TLS (image HEALTHCHECK honored) |
-| bunker-scheduler | bunkerity/bunkerweb-scheduler:1.6.11 | Config generation, cert renewal |
+| bunker-nginx | bunkerity/bunkerweb:1.6.14 | Proxy, WAF, TLS (image HEALTHCHECK honored) |
+| bunker-scheduler | bunkerity/bunkerweb-scheduler:1.6.14 | Config generation, cert renewal |
 
-Both containers keep the pinned `1.6.11` tag. Bump both together.
+Both containers keep the same pinned tag. Bump both together.
 
 ## How the proxy reaches Nextcloud
 
