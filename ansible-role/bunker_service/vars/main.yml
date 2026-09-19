@@ -1,0 +1,3 @@
+---
+quadlet_service_config_modes:
+  bunkerized_nginx.env: '0600'

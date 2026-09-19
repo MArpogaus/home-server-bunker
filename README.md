@@ -109,7 +109,10 @@ public DNS name.
 ## Role Contract
 
 Inherited from `site.yml`: `service_name`, `service_user`, `service_home`,
-`service_repo`. File tasks notify `proxy quadlets changed`.
+`service_repo`. The role imports `quadlet_service` from `ansible-base`, which
+deploys everything under `quadlets/`: `.j2` files are templated, all other
+files are copied, and the pod restarts only when one of them changed.
+`bunkerized_nginx.env` is mode `0600`, set in `vars/main.yml`. `proxy.pod.j2` is a template, because it carries the host loopback address.
 
 ## Development
 

@@ -7,37 +7,6 @@
       bunker_service_ntfy_auth_password in secrets/vars.yml as well.
   when: bunker_service_ntfy_server_name | length > 0
 
-- name: Ensure service directories exist
-  ansible.builtin.file:
-    path: "{{ service_home }}/.config/containers/systemd/configs"
-    state: directory
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0755'
-
-- name: Template container Quadlets
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ service_home }}/.config/containers/systemd/{{ item | basename | replace('.j2', '') }}"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0644'
-  loop: "{{ query('fileglob', service_repo ~ '/quadlets/*.container.j2')
-            + [service_repo ~ '/quadlets/proxy.pod'] }}"
-  notify: proxy quadlets changed
-
-- name: Deploy config files
-  ansible.builtin.template:
-    src: bunkerized_nginx.env.j2
-    dest: "{{ service_home }}/.config/containers/systemd/configs/bunkerized_nginx.env"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: '0600'
-  notify: proxy quadlets changed
-
-- name: Apply quadlet changes now
-  ansible.builtin.meta: flush_handlers
-
-- name: Ensure proxy pod is running
-  ansible.builtin.command: systemctl --user -M proxy@ start proxy-pod.service  # noqa: command-instead-of-module
-  changed_when: false
+- name: Deploy the Quadlets
+  ansible.builtin.import_role:
+    name: quadlet_service

@@ -1,5 +1,7 @@
 ---
-# Required, no default: bunker_service_server_name, bunker_service_letsencrypt_email
+# Required, no default: bunker_service_server_name.
+# bunker_service_letsencrypt_email may stay empty: BunkerWeb then registers
+# contact@<server name> with the ACME account itself.
 # See README.md for why the less obvious values are what they are.
 
 bunker_service_auto_update: "registry"
