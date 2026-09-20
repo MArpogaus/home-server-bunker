@@ -59,7 +59,7 @@ reverse lookup.
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
 | `bunker_service_bad_behavior_status_codes` | `400 401 403 405 444` | Codes that count toward a ban |
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
-| `bunker_service_modsecurity_sec_rule_engine` | `DetectionOnly` | Log matches, block nothing |
+| `bunker_service_modsecurity_sec_rule_engine` | `On` | `DetectionOnly` logs matches and blocks nothing |
 | `bunker_service_modsecurity_crs_plugins` | `nextcloud-rule-exclusions` | CRS plugin for Nextcloud |
 | `bunker_service_limit_req_rate` | `3r/s` | Default rate limit |
 | `bunker_service_limit_req_urls` | six paths | Per-path rate limits |
@@ -88,9 +88,9 @@ no volume. `401` is left out of the bad-behavior codes for this site, because
 basic auth answers `401` before the phone sends its credentials.
 
 Alertmanager reaches ntfy inside the monitoring pod and never passes through
-the proxy, so alerts still arrive when the proxy is down. The phone's
-requests to `/alerts` match CRS rule 920440 in DetectionOnly; add an exclusion
-for the ntfy site before ModSecurity goes to `On`.
+the proxy, so alerts still arrive when the proxy is down. ModSecurity is off
+for this site: the phone's polls of `/alerts/json` match CRS rule 920440, and
+a basic-auth API with one client gains nothing from a WAF.
 
 ### Why these defaults
 
@@ -103,12 +103,12 @@ be opened by path. So every stderr line of this pod reaches the journal as
 BunkerNet is off: it reports blocked requests to Bunkerity's servers, and this
 project sends nothing to a third party.
 
-ModSecurity runs in `DetectionOnly` mode. It writes a log line for every match
-and blocks nothing. Read the log for some weeks. If no legitimate request
-matches a rule, set `bunker_service_modsecurity_sec_rule_engine` to `On`. In
-the first day of real traffic every match was a scanner probing `/.env`,
-`/.git/HEAD` and friends (rule 930130), which the bad-behaviour ban then
-dropped; a normal client did not match.
+ModSecurity blocks (`On`) since 2026-09-20 after two days in `DetectionOnly`,
+in which every match on the Nextcloud site was a scanner probing `/.env`,
+`/.git/config` and friends (rule 930130) and no client matched. A client that
+gets HTTP 403 from the proxy is the sign of a false positive: read the
+`ModSecurity` lines for the rule id, and set the engine back to
+`DetectionOnly` while you add an exclusion.
 
 The `nextcloud-rule-exclusions` plugin is necessary. The CRS core rules block
 WebDAV verbs and large uploads without it.
