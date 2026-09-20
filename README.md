@@ -33,9 +33,8 @@ loopback; the upstream URLs use it. The address is a literal, not
 `host.containers.internal`, because nginx resolves an upstream name through
 its `resolver` directive, which never reads `/etc/hosts`.
 
-Publishing on loopback plus the mapping is defence in depth: firewalld refuses
-8080 from the LAN anyway, and no other container or host process can reach it
-either.
+Publishing on loopback is defence in depth: firewalld refuses 8080 from the
+LAN anyway.
 
 `bunker_service_dns_resolvers` must name resolvers the pod can reach. The
 BunkerWeb default is the Docker resolver `127.0.0.11`, which does not exist
@@ -58,7 +57,6 @@ reverse lookup.
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
-| `bunker_service_api_whitelist_ip` | `127.0.0.1 10.0.0.0/8` | Who can call the BunkerWeb API |
 | `bunker_service_bad_behavior_status_codes` | `400 401 403 405 444` | Codes that count toward a ban |
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
 | `bunker_service_modsecurity_sec_rule_engine` | `DetectionOnly` | Log matches, block nothing |
@@ -68,6 +66,7 @@ reverse lookup.
 | `bunker_service_auto_lets_encrypt` | `yes` | ACME certificates |
 | `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; mutually exclusive with ACME |
 | `bunker_service_max_client_size` | `10G` | Upload limit |
+| `bunker_service_log_level` | `notice` | nginx `error_log` level |
 | `bunker_service_*_extra_args` | `--memory=...` | Per-container ceilings |
 | `bunker_service_auto_update` | `registry` | Podman auto-update |
 
@@ -96,10 +95,13 @@ for the ntfy site before ModSecurity goes to `On`.
 ### Why these defaults
 
 The proxy pod keeps Podman's journald log driver, unlike the other pods. The
-BunkerWeb image symlinks its log files to `/proc/1/fd/1` and `/proc/1/fd/2` and
-has no syslog setting, and a journal stream socket cannot be opened by path.
-So every stderr line of this pod reaches the journal as `err`; read it by unit,
-not by priority.
+BunkerWeb image symlinks its log files to `/proc/1/fd/1` and `/proc/1/fd/2`
+and has no syslog setting. A journal stream is a socket, and a socket cannot
+be opened by path. So every stderr line of this pod reaches the journal as
+`err`; read it by unit, not by priority.
+
+BunkerNet is off: it reports blocked requests to Bunkerity's servers, and this
+project sends nothing to a third party.
 
 ModSecurity runs in `DetectionOnly` mode. It writes a log line for every match
 and blocks nothing. Read the log for some weeks. If no legitimate request
@@ -122,9 +124,9 @@ list, a normal client gets a ban.
 
 Let's Encrypt and the self-signed certificate exclude each other. Set
 `bunker_service_generate_self_signed_ssl` to `yes` only for a host without a
-public DNS name. Certificate expiry needs no alert of its own: Let's Encrypt
-emails the ACME account before expiry, and the `CertificateRenewalFailed`
-event in `service-monitoring` reports a failed renewal.
+public DNS name. Certificate expiry needs no alert of its own: the
+`CertificateRenewalFailed` alert in `service-monitoring` reports a failed
+renewal.
 
 ## When it breaks
 
@@ -147,33 +149,23 @@ Host header is wrong; that is Nextcloud's trusted domains, see
 1. Is a certificate present? `podman exec bunker-scheduler find /data -name '*.pem'`
 2. Did the scheduler push config? Look for `Successfully reloaded bunkerweb`
    in the proxy journal. `API request ... status = 500` means the push failed;
-   a read-only mount inside `/etc/nginx` is the known cause.
+   a read-only mount inside `/etc/nginx` caused it once.
 3. Are you testing with the right hostname? `DISABLE_DEFAULT_SERVER=yes` drops
    requests whose SNI matches no site, which looks identical to a dead server:
    `curl -k --resolve <domain>:443:127.0.0.1 https://<domain>/status.php`
 
-**Watching a new certificate.** `journalctl _UID=1001 -f | grep -iE 'lets.?encrypt|certificate'`.
+**Watching a new certificate.** `journalctl _UID=$(id -u proxy) -f | grep -iE 'lets.?encrypt|certificate'`.
 Nothing TLS works until the DNS record resolves from the internet.
 
 ## Role contract
 
-Inherited from `site.yml`: `service_name`, `service_user`, `service_home`,
-`service_repo`. The role imports `quadlet_service` from `ansible-base`, which
-deploys everything under `quadlets/`: `.j2` files are templated, all other
-files are copied, and the pod restarts only when one of them changed.
-`bunkerized_nginx.env` is mode `0600`, set in `vars/main.yml`. `proxy.pod.j2`
-is a template, because it carries the host loopback address.
+The contract is in `service-template/README.md`. Specific here:
+`bunkerized_nginx.env` is mode `0600` (`vars/main.yml`), and `proxy.pod.j2` is
+templated because it carries the host loopback address.
 
 ## Development
 
-Work on `dev`. Conventional commits.
-
-```bash
-pre-commit install --install-hooks -t pre-commit -t commit-msg -t pre-push
-```
-
-Plain `pre-commit install` wires up the pre-commit stage only, which leaves the
-commit-message and branch hooks dormant.
+Work on `dev`. Conventional commits. Hook setup: `ansible-base/README.md`.
 
 ## License
 
