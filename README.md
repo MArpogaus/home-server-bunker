@@ -86,6 +86,12 @@ the proxy, so alerts still arrive when the proxy is down.
 
 ### Why these defaults
 
+The proxy pod keeps Podman's journald log driver, unlike the other pods. The
+BunkerWeb image symlinks its log files to `/proc/1/fd/1` and `/proc/1/fd/2` and
+has no syslog setting, and a journal stream socket cannot be opened by path.
+So every stderr line of this pod reaches the journal as `err`; read it by unit,
+not by priority.
+
 ModSecurity runs in `DetectionOnly` mode. It writes a log line for every match
 and blocks nothing. Read the log for some weeks. If no legitimate request
 matches a rule, set `bunker_service_modsecurity_sec_rule_engine` to `On`.
