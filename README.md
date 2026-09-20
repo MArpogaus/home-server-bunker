@@ -1,12 +1,14 @@
 # service-bunker
 
-Bunkerweb reverse proxy (WAF, rate limiting, Let's Encrypt) in a rootless Podman
-pod under the `proxy` user.
+BunkerWeb reverse proxy (WAF, rate limiting, Let's Encrypt) in a rootless
+Podman pod under the `proxy` user. The host is set up by `ansible-base`, whose
+README is the entry point for the project.
 
 ## Architecture
 
 ```
   Internet → bunker-nginx (80/443) → 169.254.1.3:8080 (Nextcloud pod)
+                                   → 169.254.1.3:8081 (ntfy, monitoring pod)
 ```
 
 | Container | Image | Purpose |
@@ -16,7 +18,7 @@ pod under the `proxy` user.
 
 Both containers keep the same pinned tag. Bump both together.
 
-## How the proxy reaches Nextcloud
+## How the proxy reaches the other pods
 
 Each service runs as its own rootless user. Two rootless users do not share a
 container network, so the proxy cannot use a container name for the upstream.
@@ -25,24 +27,29 @@ It goes through the host instead.
 The Nextcloud pod publishes port 8080 on the host loopback only. pasta gives a
 pod the address `169.254.1.2` for the host, but that address reaches the
 routable addresses of the host, not the loopback. A request to `127.0.0.1` on
-the host therefore fails with 502.
+the host therefore fails with 502. The `--map-host-loopback` option in
+`proxy.pod` adds a second address, `169.254.1.3`, which maps to the host
+loopback; the upstream URLs use it. The address is a literal, not
+`host.containers.internal`, because nginx resolves an upstream name through
+its `resolver` directive, which never reads `/etc/hosts`.
 
-The `--map-host-loopback` option in `proxy.pod` adds a second address,
-`169.254.1.3`, which maps to the host loopback. The upstream URL uses this
-address. The address is a literal, not `host.containers.internal`, because
-nginx resolves an upstream name through its `resolver` directive. That
-directive never reads `/etc/hosts`, where podman writes the name.
+Publishing on loopback plus the mapping is defence in depth: firewalld refuses
+8080 from the LAN anyway, and no other container or host process can reach it
+either.
 
-`bunker_service_dns_resolvers` must name the resolvers of the pod. The
+`bunker_service_dns_resolvers` must name resolvers the pod can reach. The
 BunkerWeb default is the Docker resolver `127.0.0.11`, which does not exist
-here.
+here, and the role default names the test VM's slirp resolver `10.0.2.3`,
+which does not exist on real hardware. On the t630 it is the pasta gateway and
+the router: `"169.254.1.1 192.168.0.1"`. A wrong entry shows up as
+`failed to receive reply from UDP server` on every DNSBL and reverse lookup.
 
 ## Configuration
 
 | Variable | Default | Controls |
 |---|---|---|
 | `bunker_service_server_name` | required | Public hostname |
-| `bunker_service_letsencrypt_email` | required | ACME account |
+| `bunker_service_letsencrypt_email` | `""` | ACME contact; empty registers `contact@<server name>` |
 | `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as seen from the pod |
 | `bunker_service_nextcloud_upstream_url` | derived | Upstream |
 | `bunker_service_ntfy_server_name` | `""` | Second site for ntfy; empty leaves it out |
@@ -82,7 +89,9 @@ no volume. `401` is left out of the bad-behavior codes for this site, because
 basic auth answers `401` before the phone sends its credentials.
 
 Alertmanager reaches ntfy inside the monitoring pod and never passes through
-the proxy, so alerts still arrive when the proxy is down.
+the proxy, so alerts still arrive when the proxy is down. The phone's
+requests to `/alerts` match CRS rule 920440 in DetectionOnly; add an exclusion
+for the ntfy site before ModSecurity goes to `On`.
 
 ### Why these defaults
 
@@ -94,7 +103,10 @@ not by priority.
 
 ModSecurity runs in `DetectionOnly` mode. It writes a log line for every match
 and blocks nothing. Read the log for some weeks. If no legitimate request
-matches a rule, set `bunker_service_modsecurity_sec_rule_engine` to `On`.
+matches a rule, set `bunker_service_modsecurity_sec_rule_engine` to `On`. In
+the first day of real traffic every match was a scanner probing `/.env`,
+`/.git/HEAD` and friends (rule 930130), which the bad-behaviour ban then
+dropped; a normal client did not match.
 
 The `nextcloud-rule-exclusions` plugin is necessary. The CRS core rules block
 WebDAV verbs and large uploads without it.
@@ -110,15 +122,47 @@ list, a normal client gets a ban.
 
 Let's Encrypt and the self-signed certificate exclude each other. Set
 `bunker_service_generate_self_signed_ssl` to `yes` only for a host without a
-public DNS name.
+public DNS name. Certificate expiry needs no alert of its own: Let's Encrypt
+emails the ACME account before expiry, and the `CertificateRenewalFailed`
+event in `service-monitoring` reports a failed renewal.
 
-## Role Contract
+## When it breaks
+
+**Nextcloud returns 502 through the proxy.** nginx cannot reach its upstream.
+Test the path from inside the proxy:
+
+```bash
+podman exec bunker-nginx curl -sS -o /dev/null -w '%{http_code}\n' \
+  http://169.254.1.3:8080/status.php
+```
+
+`000` means pasta does not map the address: make sure that `proxy.pod` has
+`Network=pasta:--map-host-loopback,169.254.1.3` and that the address equals
+`bunker_service_host_loopback_address`. `400` means the path works and the
+Host header is wrong; that is Nextcloud's trusted domains, see
+`service-nextcloud/README.md`.
+
+**HTTPS does not answer at all.** Check in this order.
+
+1. Is a certificate present? `podman exec bunker-scheduler find /data -name '*.pem'`
+2. Did the scheduler push config? Look for `Successfully reloaded bunkerweb`
+   in the proxy journal. `API request ... status = 500` means the push failed;
+   a read-only mount inside `/etc/nginx` is the known cause.
+3. Are you testing with the right hostname? `DISABLE_DEFAULT_SERVER=yes` drops
+   requests whose SNI matches no site, which looks identical to a dead server:
+   `curl -k --resolve <domain>:443:127.0.0.1 https://<domain>/status.php`
+
+**Watching a new certificate.** `journalctl _UID=1001 -f | grep -iE 'lets.?encrypt|certificate'`.
+Nothing TLS works until the DNS record resolves from the internet.
+
+## Role contract
 
 Inherited from `site.yml`: `service_name`, `service_user`, `service_home`,
 `service_repo`. The role imports `quadlet_service` from `ansible-base`, which
 deploys everything under `quadlets/`: `.j2` files are templated, all other
 files are copied, and the pod restarts only when one of them changed.
-`bunkerized_nginx.env` is mode `0600`, set in `vars/main.yml`. `proxy.pod.j2` is a template, because it carries the host loopback address.
+`bunkerized_nginx.env` is mode `0600`, set in `vars/main.yml`. `proxy.pod.j2`
+is a template, because it carries the host loopback address.
 
 ## Development
 
