@@ -21,7 +21,7 @@ bunker_service_ntfy_server_name: ""
 bunker_service_ntfy_upstream_url: "http://{{ bunker_service_host_loopback_address }}:8081"
 bunker_service_ntfy_auth_user: "ntfy"
 bunker_service_ntfy_auth_password: ""
-bunker_service_dns_resolvers: "169.254.1.1 10.0.2.3"
+bunker_service_dns_resolvers: "169.254.1.1"
 
 bunker_service_whitelist_country: "DE CH AT"
 bunker_service_whitelist_ip: "127.0.0.1"

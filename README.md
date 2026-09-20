@@ -39,10 +39,10 @@ either.
 
 `bunker_service_dns_resolvers` must name resolvers the pod can reach. The
 BunkerWeb default is the Docker resolver `127.0.0.11`, which does not exist
-here, and the role default names the test VM's slirp resolver `10.0.2.3`,
-which does not exist on real hardware. On the t630 it is the pasta gateway and
-the router: `"169.254.1.1 192.168.0.1"`. A wrong entry shows up as
-`failed to receive reply from UDP server` on every DNSBL and reverse lookup.
+here. The role default is pasta's gateway `169.254.1.1`, which forwards to the
+host's resolver on the VM and on real hardware alike. A resolver that does not
+exist shows up as `failed to receive reply from UDP server` on every DNSBL and
+reverse lookup.
 
 ## Configuration
 
@@ -55,7 +55,7 @@ the router: `"169.254.1.1 192.168.0.1"`. A wrong entry shows up as
 | `bunker_service_ntfy_server_name` | `""` | Second site for ntfy; empty leaves it out |
 | `bunker_service_ntfy_upstream_url` | derived | ntfy in the monitoring pod |
 | `bunker_service_ntfy_auth_user` / `_password` | `ntfy` / required with the name | Basic auth on that site |
-| `bunker_service_dns_resolvers` | `169.254.1.1 10.0.2.3` | nginx resolvers |
+| `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
 | `bunker_service_api_whitelist_ip` | `127.0.0.1 10.0.0.0/8` | Who can call the BunkerWeb API |
