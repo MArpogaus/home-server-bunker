@@ -101,12 +101,11 @@ be opened by path. So every stderr line of this pod reaches the journal as
 BunkerNet is off: it reports blocked requests to Bunkerity's servers, and this
 project sends nothing to a third party.
 
-ModSecurity blocks (`On`) since 2026-09-20 after two days in `DetectionOnly`,
-in which every match on the Nextcloud site was a scanner probing `/.env`,
-`/.git/config` and friends (rule 930130) and no client matched. A client that
-gets HTTP 403 from the proxy is the sign of a false positive: read the
-`ModSecurity` lines for the rule id, and set the engine back to
-`DetectionOnly` while you add an exclusion.
+ModSecurity blocks (`On`). On the Nextcloud site the matches are scanners
+probing `/.env`, `/.git/config` and friends (rule 930130); no real client
+matches a rule. A client that gets HTTP 403 from the proxy is the sign of a
+false positive: read the `ModSecurity` lines for the rule id, and set the
+engine to `DetectionOnly` while you add an exclusion.
 
 The `nextcloud-rule-exclusions` plugin is necessary. The CRS core rules block
 WebDAV verbs and large uploads without it.
@@ -120,10 +119,9 @@ the Memories app. Add a path to this list when a client reports HTTP 429.
 for many normal requests, such as a missing `.well-known` path. 401 stays in
 the list, so the threshold is 25 per minute instead of BunkerWeb's 10: a DAV
 client asks for every calendar and address book without credentials first,
-one 401 each, and Thunderbird's ten collections met the default in one second
-(2026-09-21, home address banned for a day). Twenty-five wrong passwords a minute
-is still a ban, and Nextcloud's brute-force throttle slows a guesser long
-before that.
+one 401 each, and a client with ten collections reaches ten in a second.
+Twenty-five wrong passwords a minute is still a ban, and Nextcloud's
+brute-force throttle slows a guesser long before that.
 
 Let's Encrypt and the self-signed certificate exclude each other. Set
 `bunker_service_generate_self_signed_ssl` to `yes` only for a host without a
