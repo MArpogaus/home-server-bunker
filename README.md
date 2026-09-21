@@ -65,7 +65,7 @@ reverse lookup.
 | `bunker_service_limit_req_urls` | six paths | Per-path rate limits |
 | `bunker_service_auto_lets_encrypt` | `yes` | ACME certificates |
 | `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; mutually exclusive with ACME |
-| `bunker_service_max_client_size` | `10G` | Upload limit |
+| `bunker_service_max_client_size` | `15G` | Upload limit, same as Nextcloud's `php_upload_limit` |
 | `bunker_service_log_level` | `notice` | nginx `error_log` level |
 | `bunker_service_*_extra_args` | `--memory=...` | Per-container ceilings |
 | `bunker_service_auto_update` | `registry` | Podman auto-update |

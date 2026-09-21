@@ -38,5 +38,6 @@ bunker_service_limit_req_urls:
 bunker_service_auto_lets_encrypt: "yes"
 bunker_service_letsencrypt_email: ""
 bunker_service_generate_self_signed_ssl: "no"
-bunker_service_max_client_size: "10G"
+# Matches nextcloud_service_php_upload_limit; the smaller of the two wins.
+bunker_service_max_client_size: "15G"
 bunker_service_log_level: "notice"
