@@ -53,7 +53,6 @@ reverse lookup.
 | `bunker_service_nextcloud_upstream_url` | derived | Upstream |
 | `bunker_service_ntfy_server_name` | `""` | Second site for ntfy; empty leaves it out |
 | `bunker_service_ntfy_upstream_url` | derived | ntfy in the monitoring pod |
-| `bunker_service_ntfy_auth_user` / `_password` | `ntfy` / required with the name | Basic auth on that site |
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
@@ -79,19 +78,18 @@ from the root and does not work under a subpath.
 
 ```yaml
 bunker_service_ntfy_server_name: ntfy.example.org
-bunker_service_ntfy_auth_password: "<a long random string>"
 ```
 
 The name needs a DNS record of its own, because BunkerWeb requests a
-certificate for it. Basic auth is enforced here rather than in ntfy: the phone
-app sends the same header either way, and ntfy then needs no user database and
-no volume. `401` is left out of the bad-behavior codes for this site, because
-basic auth answers `401` before the phone sends its credentials.
+certificate for it. Authentication is ntfy's own (`service-monitoring`,
+"Reaching ntfy"); this site is a plain TLS proxy. `401` is left out of the
+bad-behavior codes for this site: the phone app answers ntfy's `401`
+challenge with its credentials on every fresh connection.
 
 Alertmanager reaches ntfy inside the monitoring pod and never passes through
 the proxy, so alerts still arrive when the proxy is down. ModSecurity is off
 for this site: the phone's polls of `/alerts/json` match CRS rule 920440, and
-a basic-auth API with one client gains nothing from a WAF.
+an authenticated API with one client gains nothing from a WAF.
 
 ### Why these defaults
 
