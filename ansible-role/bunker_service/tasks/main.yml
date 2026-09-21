@@ -1,4 +1,18 @@
 ---
+# BunkerWeb ignores a multisite key whose prefix is not exactly one server
+# name, and the two certificate sources exclude each other: ACME needs public
+# DNS, the self-signed one is for a host that has none.
+- name: Assert the certificate settings make sense
+  ansible.builtin.assert:
+    that:
+      - bunker_service_server_name.split() | length == 1
+      - not (bunker_service_auto_lets_encrypt | bool and bunker_service_generate_self_signed_ssl | bool)
+    fail_msg: >-
+      bunker_service_server_name must be a single name, and
+      bunker_service_auto_lets_encrypt and bunker_service_generate_self_signed_ssl
+      cannot both be yes. A second site goes in bunker_service_ntfy_server_name.
+    quiet: true
+
 - name: Deploy the Quadlets
   ansible.builtin.import_role:
     name: quadlet_service
