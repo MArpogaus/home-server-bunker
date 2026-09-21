@@ -58,7 +58,7 @@ reverse lookup.
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
 | `bunker_service_bad_behavior_status_codes` | `400 401 403 405 444` | Codes that count toward a ban |
-| `bunker_service_bad_behavior_threshold` | `50` | Bad answers per minute before a 24 h ban |
+| `bunker_service_bad_behavior_threshold` | `25` | Bad answers per minute before a 24 h ban |
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
 | `bunker_service_modsecurity_sec_rule_engine` | `On` | `DetectionOnly` logs matches and blocks nothing |
 | `bunker_service_modsecurity_crs_plugins` | `nextcloud-rule-exclusions` | CRS plugin for Nextcloud |
@@ -121,10 +121,10 @@ the Memories app. Add a path to this list when a client reports HTTP 429.
 
 `bunker_service_bad_behavior_status_codes` omits 404. Nextcloud answers 404
 for many normal requests, such as a missing `.well-known` path. 401 stays in
-the list, so the threshold is 50 per minute instead of BunkerWeb's 10: a DAV
+the list, so the threshold is 25 per minute instead of BunkerWeb's 10: a DAV
 client asks for every calendar and address book without credentials first,
 one 401 each, and Thunderbird's ten collections met the default in one second
-(2026-09-21, home address banned for a day). Fifty wrong passwords a minute
+(2026-09-21, home address banned for a day). Twenty-five wrong passwords a minute
 is still a ban, and Nextcloud's brute-force throttle slows a guesser long
 before that.
 
