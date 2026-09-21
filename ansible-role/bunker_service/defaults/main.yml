@@ -19,7 +19,7 @@ bunker_service_dns_resolvers: "169.254.1.1"
 
 bunker_service_whitelist_country: "DE CH AT"
 bunker_service_whitelist_ip: "127.0.0.1"
-bunker_service_bad_behavior_status_codes: "400 401 403 405 444"
+bunker_service_bad_behavior_status_codes: "400 403 405 444"
 
 bunker_service_use_modsecurity: "yes"
 bunker_service_modsecurity_sec_rule_engine: "On"

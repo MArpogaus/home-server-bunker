@@ -57,7 +57,7 @@ reverse lookup.
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | Lets local health checks past the geo filter |
-| `bunker_service_bad_behavior_status_codes` | `400 401 403 405 444` | Codes that count toward a ban |
+| `bunker_service_bad_behavior_status_codes` | `400 403 405 444` | Codes that count toward a ban |
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
 | `bunker_service_modsecurity_sec_rule_engine` | `On` | `DetectionOnly` logs matches and blocks nothing |
 | `bunker_service_modsecurity_crs_plugins` | `nextcloud-rule-exclusions` | CRS plugin for Nextcloud |
@@ -118,9 +118,12 @@ in `bunker_service_limit_req_urls` get a higher limit: the app store, the
 collaborative text editor, preview generation, WebDAV, the push websocket and
 the Memories app. Add a path to this list when a client reports HTTP 429.
 
-`bunker_service_bad_behavior_status_codes` omits 404. Nextcloud answers 404 for
-many normal requests, such as a missing `.well-known` path. With 404 in the
-list, a normal client gets a ban.
+`bunker_service_bad_behavior_status_codes` omits 404 and 401. Nextcloud
+answers 404 for many normal requests, such as a missing `.well-known` path.
+A DAV client asks for every calendar and address book without credentials
+first and gets a 401 for each: Thunderbird produced ten in one second on
+2026-09-21 and the home address was banned for a day. Nextcloud's own
+brute-force protection covers failed logins.
 
 Let's Encrypt and the self-signed certificate exclude each other. Set
 `bunker_service_generate_self_signed_ssl` to `yes` only for a host without a
