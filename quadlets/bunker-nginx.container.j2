@@ -8,13 +8,5 @@ ContainerName=bunker-nginx
 Pod=proxy.pod
 EnvironmentFile=./configs/bunkerized_nginx.env
 PodmanArgs={{ bunker_service_nginx_extra_args }}
-AutoUpdate={{ bunker_service_auto_update }}
 # No HealthOnFailure here: podman rejects it unless the quadlet also sets
 # HealthCmd, and bunkerweb's own HEALTHCHECK does not satisfy that.
-
-[Service]
-Restart=on-failure
-RestartSec=10s
-
-[Install]
-WantedBy=default.target

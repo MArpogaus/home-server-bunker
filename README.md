@@ -68,7 +68,6 @@ reverse lookup.
 | `bunker_service_max_client_size` | `15G` | Upload limit, same as Nextcloud's `php_upload_limit` |
 | `bunker_service_log_level` | `notice` | nginx `error_log` level |
 | `bunker_service_*_extra_args` | `--memory=...` | Per-container ceilings |
-| `bunker_service_auto_update` | `registry` | Podman auto-update |
 
 ### The ntfy site
 

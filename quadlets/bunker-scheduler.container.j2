@@ -5,11 +5,3 @@ Pod=proxy.pod
 EnvironmentFile=./configs/bunkerized_nginx.env
 Volume=bw-data:/data:Z
 PodmanArgs={{ bunker_service_scheduler_extra_args }}
-AutoUpdate={{ bunker_service_auto_update }}
-
-[Service]
-Restart=on-failure
-RestartSec=10s
-
-[Install]
-WantedBy=default.target
