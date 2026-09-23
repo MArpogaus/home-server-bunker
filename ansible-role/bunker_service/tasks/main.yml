@@ -13,7 +13,7 @@
       The deployment sets bunker_service_sites, a site name is a hostname and
       appears once, an option key is upper case,
       an option value carries no newline or `=`, and Let's Encrypt and the
-      self-signed certificate exclude each other. README.md, "Sites".
+      self-signed certificate exclude each other. home-server-bunker/README.md, "Sites".
     quiet: true
   vars:
     bunker_service_site_option_keys: >-
