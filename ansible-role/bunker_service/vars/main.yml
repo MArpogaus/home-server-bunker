@@ -1,0 +1,21 @@
+---
+# Computed: a host sets bunker_service_extra_sites, never this.
+bunker_service_sites: >-
+  {{ [{'name': bunker_service_server_name,
+       'upstream': bunker_service_nextcloud_upstream_url,
+       'limit_req_urls': bunker_service_limit_req_urls,
+       'options': {'REVERSE_PROXY_WS': 'yes',
+                   'MAX_CLIENT_SIZE': bunker_service_max_client_size,
+                   'REFERRER_POLICY': 'no-referrer',
+                   'ALLOWED_METHODS': 'GET|POST|HEAD|COPY|DELETE|LOCK|MKCOL|MOVE|PROPFIND|PROPPATCH|PUT|UNLOCK|OPTIONS|REPORT|SEARCH',
+                   'BAD_BEHAVIOR_STATUS_CODES': bunker_service_bad_behavior_status_codes,
+                   'BAD_BEHAVIOR_THRESHOLD': bunker_service_bad_behavior_threshold,
+                   'MODSECURITY_CRS_PLUGINS': bunker_service_modsecurity_crs_plugins}}]
+     + ([{'name': bunker_service_ntfy_server_name,
+          'upstream': bunker_service_ntfy_upstream_url,
+          'options': {'REVERSE_PROXY_WS': 'yes',
+                      'ALLOWED_METHODS': 'GET|POST|HEAD|PUT|OPTIONS',
+                      'USE_MODSECURITY': 'no',
+                      'BAD_BEHAVIOR_STATUS_CODES': '400 403 405 444'}}]
+        if bunker_service_ntfy_server_name else [])
+     + bunker_service_extra_sites }}

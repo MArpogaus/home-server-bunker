@@ -1,0 +1,5 @@
+[Pod]
+PodName=proxy
+Network=pasta:--map-host-loopback,{{ bunker_service_host_loopback_address }}
+PublishPort=80:8080/tcp
+PublishPort=443:8443/tcp

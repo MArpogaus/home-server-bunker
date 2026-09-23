@@ -1,0 +1,10 @@
+[Unit]
+Requires=bunker-scheduler.service
+After=bunker-scheduler.service
+
+[Container]
+Image={{ bunker_service_nginx_image }}
+ContainerName=bunker-nginx
+Pod=proxy.pod
+EnvironmentFile=./configs/bunkerized_nginx.env
+Memory=768M
