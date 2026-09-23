@@ -32,7 +32,7 @@ The Nextcloud pod publishes port 8080 on the host loopback only. pasta gives a
 pod the address `169.254.1.2` for the host, but that address reaches the
 routable addresses of the host, not the loopback. A request to `127.0.0.1` on
 the host therefore fails with 502. The `--map-host-loopback` option in
-`proxy.pod` adds a second address, `169.254.1.3`, which maps to the host
+`bunker.pod` adds a second address, `169.254.1.3`, which maps to the host
 loopback. The upstream URLs use it. The address is a literal, not
 `host.containers.internal`, because nginx resolves an upstream name through
 its `resolver` directive, which never reads `/etc/hosts`.
@@ -200,10 +200,10 @@ referer can carry a share link.
 Test the path from inside the proxy:
 
 ```bash
-run0 --user=proxy -- bash -c "podman exec bunker-nginx curl -sS -o /dev/null -w '%{http_code}\n' http://169.254.1.3:8080/status.php"
+run0 --user=bunker -- bash -c "podman exec bunker-nginx curl -sS -o /dev/null -w '%{http_code}\n' http://169.254.1.3:8080/status.php"
 ```
 
-- `000`: pasta does not map the address. `proxy.pod` must have
+- `000`: pasta does not map the address. `bunker.pod` must have
   `Network=pasta:--map-host-loopback,169.254.1.3`, and the address must equal
   `bunker_service_host_loopback_address`.
 - `400`: the path works, and the Host header is not one of Nextcloud's
@@ -212,7 +212,7 @@ run0 --user=proxy -- bash -c "podman exec bunker-nginx curl -sS -o /dev/null -w 
 **HTTPS does not answer.** Check these in order:
 
 1. A certificate exists:
-   `run0 --user=proxy -- bash -c "podman exec bunker-scheduler find /data -name '*.pem'"`.
+   `run0 --user=bunker -- bash -c "podman exec bunker-scheduler find /data -name '*.pem'"`.
 2. The scheduler pushed its config: the proxy journal shows
    `Successfully reloaded bunkerweb`. `API request ... status = 500` means the
    push failed, which a read-only mount inside `/etc/nginx` causes.
@@ -221,13 +221,13 @@ run0 --user=proxy -- bash -c "podman exec bunker-nginx curl -sS -o /dev/null -w 
    `curl -k --resolve <domain>:443:127.0.0.1 https://<domain>/status.php`.
 
 To watch a new certificate, run
-`run0 journalctl _UID=$(id -u proxy) -f | grep -iE 'lets.?encrypt|certificate'`.
+`run0 journalctl _UID=$(id -u bunker) -f | grep -iE 'lets.?encrypt|certificate'`.
 TLS works only after the DNS record resolves from the internet.
 
 ## Role contract
 
 The contract is in `home-server-template/README.md`. The role templates
-`proxy.pod.j2`, because it carries the host loopback address.
+`bunker.pod.j2`, because it carries the host loopback address.
 
 ## License
 

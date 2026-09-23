@@ -216,7 +216,7 @@
       },
       "targets": [
         {
-          "expr": "(sum(count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [1h])) / 60) or vector(0)",
+          "expr": "(sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [1h])) / 60) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -273,7 +273,7 @@
       },
       "targets": [
         {
-          "expr": "count(sum by (ip) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [1h]))) or vector(0)",
+          "expr": "count(sum by (ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [1h]))) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -330,7 +330,7 @@
       },
       "targets": [
         {
-          "expr": "sum(count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"5..\" [1h])) or vector(0)",
+          "expr": "sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"5..\" [1h])) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -388,7 +388,7 @@
       },
       "targets": [
         {
-          "expr": "sum(count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"[BADBEHAVIOR]\" |= \"is banned for\" [24h])) or vector(0)",
+          "expr": "sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"[BADBEHAVIOR]\" |= \"is banned for\" [24h])) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -445,7 +445,7 @@
       },
       "targets": [
         {
-          "expr": "sum(count_over_time({service=\"proxy\", container=~\"bunker-.*\"} |~ \"\\\\[(crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]\" [24h])) or vector(0)",
+          "expr": "sum(count_over_time({service=\"bunker\", container=~\"bunker-.*\"} |~ \"\\\\[(crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]\" [24h])) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -600,7 +600,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (site) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto]))",
+          "expr": "sum by (site) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto]))",
           "legendFormat": "{{site}}",
           "queryType": "range",
           "refId": "A",
@@ -667,7 +667,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (class) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | label_format class=\"{{ .status | substr 0 1 }}xx\" [$__auto]))",
+          "expr": "sum by (class) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | label_format class=\"{{ .status | substr 0 1 }}xx\" [$__auto]))",
           "legendFormat": "{{class}}",
           "queryType": "range",
           "refId": "A",
@@ -795,7 +795,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (reason) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__auto]))",
+          "expr": "sum by (reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__auto]))",
           "legendFormat": "{{reason}}",
           "queryType": "range",
           "refId": "A",
@@ -805,7 +805,7 @@
           }
         },
         {
-          "expr": "label_replace(sum(count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__auto])), \"series\", \"new bans\", \"\", \"\")",
+          "expr": "label_replace(sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__auto])), \"series\", \"new bans\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "C",
@@ -1011,7 +1011,7 @@
       },
       "targets": [
         {
-          "expr": "label_replace(quantile_over_time(0.5, {service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p50\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p50\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "A",
@@ -1021,7 +1021,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.95, {service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p95\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p95\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "B",
@@ -1031,7 +1031,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.5, {service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "C",
@@ -1041,7 +1041,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.95, {service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "D",
@@ -1105,7 +1105,7 @@
       },
       "targets": [
         {
-          "expr": "(sum by (site) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"5..\" [$__auto])) or sum by (site) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto])) * 0) / sum by (site) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto]))",
+          "expr": "(sum by (site) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"5..\" [$__auto])) or sum by (site) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto])) * 0) / sum by (site) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__auto]))",
           "legendFormat": "{{site}}",
           "queryType": "range",
           "refId": "A",
@@ -1184,7 +1184,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ip) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1269,7 +1269,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (uri) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
+          "expr": "topk(10, sum by (uri) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1354,7 +1354,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ua) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
+          "expr": "topk(10, sum by (ua) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1439,7 +1439,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (id) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"ModSecurity\" | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
+          "expr": "topk(10, sum by (id) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"ModSecurity\" | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1509,7 +1509,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (status) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range]))",
+          "expr": "sum by (status) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range]))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1579,7 +1579,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ip) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__range])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1649,7 +1649,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ip, reason) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__range])))",
+          "expr": "topk(10, sum by (ip, reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1719,7 +1719,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (site, method) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range]))",
+          "expr": "sum by (site, method) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range]))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1789,7 +1789,7 @@
       },
       "targets": [
         {
-          "expr": "topk(30, sum by (status, ip) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
+          "expr": "topk(30, sum by (status, ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1859,7 +1859,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (uri, status) (count_over_time({service=\"proxy\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"403|429|444\" [$__range])))",
+          "expr": "topk(10, sum by (uri, status) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status =~ \"403|429|444\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1957,7 +1957,7 @@
       },
       "targets": [
         {
-          "expr": "{service=\"proxy\", container=\"bunker-nginx\"} |~ \"denied access|is banned for\"",
+          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ \"denied access|is banned for\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",
@@ -2007,7 +2007,7 @@
       },
       "targets": [
         {
-          "expr": "{service=\"proxy\", container=~\"bunker-.*\"} |~ \"\\\\[(error|crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]|(?i)certbot|certificate\" != \"denied access\" != \"ModSecurity\"",
+          "expr": "{service=\"bunker\", container=~\"bunker-.*\"} |~ \"\\\\[(error|crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]|(?i)certbot|certificate\" != \"denied access\" != \"ModSecurity\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",

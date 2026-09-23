@@ -1,11 +1,11 @@
 groups:
-  - name: proxy
+  - name: bunker
     interval: 1m
     rules:
       - alert: BunkerWebError
         expr: |
           sum(count_over_time(
-            {service="proxy", container=~"bunker-.*"}
+            {service="bunker", container=~"bunker-.*"}
               |~ "\\[(crit|alert|emerg)\\]|\\[ERROR\\]" [5m]
           )) > 0
         for: 1m
@@ -13,12 +13,12 @@ groups:
           severity: warning
         annotations:
           summary: "BunkerWeb logged a critical error"
-          description: "Read `journalctl _UID=$(id -u proxy) -p err` on the host."
+          description: "Read `journalctl _UID=$(id -u bunker) -p err` on the host."
 
       - alert: BunkerWebBanSpike
         expr: |
           sum(count_over_time(
-            {service="proxy", container="bunker-nginx"} |= "[BADBEHAVIOR]" |= "is banned for" [1h]
+            {service="bunker", container="bunker-nginx"} |= "[BADBEHAVIOR]" |= "is banned for" [1h]
           )) > 20
         labels:
           severity: warning
@@ -28,14 +28,14 @@ groups:
       - alert: Proxy5xx
         expr: |
           (
-            sum by (host) (count_over_time({service="proxy", container="bunker-nginx"}
+            sum by (host) (count_over_time({service="bunker", container="bunker-nginx"}
               |~ `" 5\d\d \d+ "` | regexp `^(?P<host>\S+) ` [10m]))
             /
-            sum by (host) (count_over_time({service="proxy", container="bunker-nginx"}
+            sum by (host) (count_over_time({service="bunker", container="bunker-nginx"}
               |~ `" \d{3} \d+ "` | regexp `^(?P<host>\S+) ` [10m]))
           ) > 0.05
           and
-          sum by (host) (count_over_time({service="proxy", container="bunker-nginx"}
+          sum by (host) (count_over_time({service="bunker", container="bunker-nginx"}
             |~ `" \d{3} \d+ "` | regexp `^(?P<host>\S+) ` [10m])) > 50
         for: 5m
         labels:

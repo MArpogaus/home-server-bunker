@@ -1,7 +1,7 @@
 [Container]
 Image={{ bunker_service_scheduler_image }}
 ContainerName=bunker-scheduler
-Pod=proxy.pod
+Pod=bunker.pod
 EnvironmentFile=./configs/bunkerweb.env
 Volume=bw-data:/data:Z
 Memory=512M
