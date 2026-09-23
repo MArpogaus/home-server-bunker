@@ -49,11 +49,13 @@ reverse lookup.
 
 ## Configuration
 
+The variables that every deployment sets are in `home-server/README.md`,
+"Variables". The role's own defaults:
+
 | Variable | Default | Controls |
 |---|---|---|
 | `bunker_service_nginx_image` | `docker.io/bunkerity/bunkerweb:1.6.15` | Proxy image; Renovate bumps the tag |
 | `bunker_service_scheduler_image` | `docker.io/bunkerity/bunkerweb-scheduler:1.6.15` | Scheduler image; both tags must match |
-| `bunker_service_letsencrypt_email` | `""` | ACME contact; empty registers `contact@<server name>` |
 | `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as seen from the pod |
 | `bunker_service_sites` | required | The sites; see "Sites" |
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
@@ -62,8 +64,6 @@ reverse lookup.
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
 | `bunker_service_modsecurity_sec_rule_engine` | `On` | `DetectionOnly` logs matches and blocks nothing |
 | `bunker_service_limit_req_rate` | `3r/s` | Default rate limit |
-| `bunker_service_auto_lets_encrypt` | `yes` | ACME certificates |
-| `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; needs `bunker_service_auto_lets_encrypt: "no"` |
 | `bunker_service_log_level` | `notice` | nginx `error_log` level |
 
 ### The ntfy site
@@ -123,11 +123,9 @@ client asks for every calendar and address book without credentials first, one
 wrong passwords a minute is still a ban, and Nextcloud's brute-force throttle
 slows a guesser long before that.
 
-Let's Encrypt and the self-signed certificate exclude each other. A host
-without a public DNS name sets `bunker_service_generate_self_signed_ssl: "yes"`
-together with `bunker_service_auto_lets_encrypt: "no"`; the play refuses both
-on. `CertificateExpiresSoon` in `home-server-monitoring` reports
-a certificate that renewal does not keep fresh.
+The certificate variables and the ACME contact are part of a deployment's
+settings: `home-server/README.md`, "Variables". `CertificateExpiresSoon` in
+`home-server-monitoring` reports a certificate that renewal does not keep fresh.
 
 The Nextcloud site sets `REFERRER_POLICY=no-referrer`. BunkerWeb replaces the
 upstream's `Referrer-Policy` with its own, so the proxy is the one layer that
