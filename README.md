@@ -109,10 +109,10 @@ socket by path. Every stderr line of this pod therefore reaches the journal as
 BunkerNet is off: it reports blocked requests to Bunkerity's servers, and this
 project sends nothing to a third party.
 
-The proxy containers carry no `HealthOnFailure=kill`, unlike every Nextcloud
-and monitoring container. Podman rejects the key unless the Quadlet also sets
-`HealthCmd`, and the BunkerWeb image's own `HEALTHCHECK` does not satisfy
-that. `Restart=on-failure` from the shared drop-in covers a real crash.
+The proxy containers carry no `HealthOnFailure=kill`. Podman rejects the key
+unless the Quadlet also sets `HealthCmd`, and the BunkerWeb image's own
+`HEALTHCHECK` does not satisfy that. `Restart=on-failure` from the shared
+drop-in covers a real crash.
 
 ModSecurity blocks (`On`). A client that gets HTTP 403 from the proxy is the
 sign of a false positive. Read the `ModSecurity` lines for the rule id. Set the
