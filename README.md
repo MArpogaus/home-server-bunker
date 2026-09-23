@@ -72,7 +72,7 @@ The variables that every deployment sets are in `home-server/README.md`,
 Nextcloud and ntfy. Alerts must reach the phone while it is away from home, so
 ntfy gets a site of its own, and not a path under Nextcloud. ntfy serves its API
 and its web app from the root, and does not work under a subpath. Its hostname,
-`bunker_service_ntfy_server_name`, is in the secrets.
+`ntfy_hostname`, is in the secrets.
 
 The name needs a DNS record of its own, because BunkerWeb requests a certificate
 for it. ntfy does its own authentication (`home-server-monitoring`, "Reaching
@@ -139,7 +139,7 @@ the entry's `options`. A site therefore carries any setting that BunkerWeb
 understands, without a change to this role. A new service adds one entry:
 
 ```yaml
-  - name: "{{ immich_server_name }}"
+  - name: "{{ immich_hostname }}"
     upstream: "http://{{ bunker_service_host_loopback_address }}:8082"
     options:
       REVERSE_PROXY_WS: "yes"
