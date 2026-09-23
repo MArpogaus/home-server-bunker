@@ -54,8 +54,7 @@ The variables that every deployment sets are in `home-server/README.md`,
 
 | Variable | Default | Controls |
 |---|---|---|
-| `bunker_service_nginx_image` | `docker.io/bunkerity/bunkerweb:1.6.15` | Proxy image; Renovate bumps the tag |
-| `bunker_service_scheduler_image` | `docker.io/bunkerity/bunkerweb-scheduler:1.6.15` | Scheduler image; both tags must match |
+| `bunker_service_nginx_image`, `bunker_service_scheduler_image` | see `defaults/main.yml` | Proxy and scheduler images; Renovate bumps both tags together |
 | `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as seen from the pod |
 | `bunker_service_sites` | required | The sites; see "Sites" |
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
