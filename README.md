@@ -176,7 +176,7 @@ collects. The label contract is in its README.
 
 The dashboard is JSON maintained by hand: edit it in Grafana, export it, delete
 its `links`, and commit it. Its access-log panels parse the `LOG_FORMAT` that
-`bunkerized_nginx.env.j2` pins: the image default plus `$request_time` and
+`bunkerweb.env.j2` pins: the image default plus `$request_time` and
 `$upstream_response_time`, with `-` in place of `$remote_user` and
 `$http_referer`. Public WebDAV sends a share token as the user name, and a
 referer can carry a share link.
