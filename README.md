@@ -134,19 +134,25 @@ sets it.
 ## Sites
 
 Every proxied site is an entry in `bunker_service_sites`, and the deployment
-sets the whole list. The template writes `<name>_<KEY>=<value>` for each key in
-the entry's `options`. A site therefore carries any setting that BunkerWeb
-understands, without a change to this role. A new service adds one entry:
+sets the whole list in `home-server/inventory/group_vars/homeserver.yml`. The
+template writes `<name>_<KEY>=<value>` for each key in the entry's `options`. A
+site therefore carries any setting that BunkerWeb understands, without a change
+to this role. A new service defines its site beside `nextcloud_site` and joins
+it into the list:
 
 ```yaml
-  - name: "{{ immich_hostname }}"
-    upstream: "http://{{ bunker_service_host_loopback_address }}:8082"
-    options:
-      REVERSE_PROXY_WS: "yes"
-      MAX_CLIENT_SIZE: "50G"
-      ALLOWED_METHODS: "GET|POST|HEAD|PUT|DELETE|PATCH|OPTIONS"
-    limit_req_urls:
-      - {url: /api/, rate: 30r/s}
+bunker_service_sites: >-
+  {{ [nextcloud_site, immich_site] + ([ntfy_site] if ntfy_hostname | default('') | length > 0 else []) }}
+
+immich_site:
+  name: "{{ immich_hostname }}"
+  upstream: "http://{{ bunker_service_host_loopback_address }}:8082"
+  options:
+    REVERSE_PROXY_WS: "yes"
+    MAX_CLIENT_SIZE: "50G"
+    ALLOWED_METHODS: "GET|POST|HEAD|PUT|DELETE|PATCH|OPTIONS"
+  limit_req_urls:
+    - {url: /api/, rate: 30r/s}
 ```
 
 Three things to know:
