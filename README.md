@@ -4,8 +4,8 @@ BunkerWeb in a rootless Podman pod, with an Ansible role that deploys it.
 BunkerWeb is the reverse proxy: it terminates TLS, applies a web application
 firewall and bans a client that misbehaves.
 
-Each site it serves is one entry in `bunker_service_sites`, which the role
-composes. Add a site with `bunker_service_extra_sites`.
+Each site it serves is one entry in `bunker_service_sites`, which the
+deployment sets. The role names no service.
 `home-server-core` prepares the host.
 
 ## Architecture
@@ -51,39 +51,28 @@ reverse lookup.
 
 | Variable | Default | Controls |
 |---|---|---|
-| `bunker_service_server_name` | required | Public hostname |
 | `bunker_service_nginx_image` | `docker.io/bunkerity/bunkerweb:1.6.15` | Proxy image; Renovate bumps the tag |
 | `bunker_service_scheduler_image` | `docker.io/bunkerity/bunkerweb-scheduler:1.6.15` | Scheduler image; both tags must match |
 | `bunker_service_letsencrypt_email` | `""` | ACME contact; empty registers `contact@<server name>` |
 | `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as seen from the pod |
-| `bunker_service_nextcloud_upstream_url` | derived | Upstream |
-| `bunker_service_ntfy_server_name` | `""` | ntfy's hostname; empty leaves that site out |
-| `bunker_service_ntfy_upstream_url` | derived | ntfy in the monitoring pod |
-| `bunker_service_extra_sites` | `[]` | Further sites; see "Adding a site" |
+| `bunker_service_sites` | required | The sites; see "Sites" |
 | `bunker_service_dns_resolvers` | `169.254.1.1` | nginx resolvers |
 | `bunker_service_whitelist_country` | `DE CH AT` | Geo allowlist |
 | `bunker_service_whitelist_ip` | `127.0.0.1` | The whitelist plugin: a match skips every check, not the geo filter alone. Loopback is the pod itself |
-| `bunker_service_bad_behavior_status_codes` | `400 401 403 405 444` | Codes that count toward a ban |
-| `bunker_service_bad_behavior_threshold` | `25` | Bad answers per minute before a 24 h ban |
 | `bunker_service_use_modsecurity` | `yes` | ModSecurity WAF |
 | `bunker_service_modsecurity_sec_rule_engine` | `On` | `DetectionOnly` logs matches and blocks nothing |
-| `bunker_service_modsecurity_crs_plugins` | `nextcloud-rule-exclusions` | CRS plugin for Nextcloud |
 | `bunker_service_limit_req_rate` | `3r/s` | Default rate limit |
-| `bunker_service_limit_req_urls` | six paths | Per-path rate limits |
 | `bunker_service_auto_lets_encrypt` | `yes` | ACME certificates |
-| `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; mutually exclusive with ACME |
-| `bunker_service_max_client_size` | `15G` | Upload limit, same as Nextcloud's `php_upload_limit` |
+| `bunker_service_generate_self_signed_ssl` | `no` | Fallback cert; needs `bunker_service_auto_lets_encrypt: "no"` |
 | `bunker_service_log_level` | `notice` | nginx `error_log` level |
 
 ### The ntfy site
 
-Alerts must reach the phone while it is away from home. ntfy therefore gets a
-second site, and not a path under Nextcloud. ntfy serves its API and its web app
-from the root, and does not work under a subpath.
-
-```yaml
-bunker_service_ntfy_server_name: ntfy.example.org
-```
+`home-server-deploy/inventory/group_vars/homeserver.yml` sets two sites:
+Nextcloud and ntfy. Alerts must reach the phone while it is away from home, so
+ntfy gets a site of its own, and not a path under Nextcloud. ntfy serves its API
+and its web app from the root, and does not work under a subpath. Its hostname,
+`bunker_service_ntfy_server_name`, is in the secrets.
 
 The name needs a DNS record of its own, because BunkerWeb requests a certificate
 for it. ntfy does its own authentication (`home-server-monitoring`, "Reaching
@@ -122,39 +111,37 @@ The `nextcloud-rule-exclusions` plugin is necessary. The CRS core rules block
 WebDAV verbs and large uploads without it.
 
 The default rate limit of `3r/s` is too low for a Nextcloud client. The paths
-in `bunker_service_limit_req_urls` get a higher limit: the app store, the
+in the Nextcloud site's `limit_req_urls` get a higher limit: the app store, the
 collaborative text editor, preview generation, WebDAV, the push websocket and
 the Memories app. When a client reports HTTP 429, add its path to this list.
 
-`bunker_service_bad_behavior_status_codes` omits 404. Nextcloud answers 404
-for many normal requests, such as a missing `.well-known` path. 401 stays in
+The Nextcloud site's `BAD_BEHAVIOR_STATUS_CODES` omits 404. Nextcloud answers
+404 for many normal requests, such as a missing `.well-known` path. 401 stays in
 the list, so the threshold is 25 per minute instead of BunkerWeb's 10. A DAV
 client asks for every calendar and address book without credentials first, one
-401 each. A client with ten collections reaches ten in a second.
-Twenty-five wrong passwords a minute is still a ban, and Nextcloud's
-brute-force throttle slows a guesser long before that.
+401 each. A client with ten collections reaches ten in a second. Twenty-five
+wrong passwords a minute is still a ban, and Nextcloud's brute-force throttle
+slows a guesser long before that.
 
-Let's Encrypt and the self-signed certificate exclude each other. Set
-`bunker_service_generate_self_signed_ssl` to `yes` only for a host without a
-public DNS name. `CertificateExpiresSoon` in `home-server-monitoring` reports
+Let's Encrypt and the self-signed certificate exclude each other. A host
+without a public DNS name sets `bunker_service_generate_self_signed_ssl: "yes"`
+together with `bunker_service_auto_lets_encrypt: "no"`; the play refuses both
+on. `CertificateExpiresSoon` in `home-server-monitoring` reports
 a certificate that renewal does not keep fresh.
 
 The Nextcloud site sets `REFERRER_POLICY=no-referrer`. BunkerWeb replaces the
 upstream's `Referrer-Policy` with its own, so the proxy is the one layer that
 sets it.
 
-## Adding a site
+## Sites
 
-Every proxied site is an entry in `bunker_service_sites`. `vars/main.yml`
-composes that list from the Nextcloud site, ntfy when it has a hostname, and
-`bunker_service_extra_sites`. The template writes `<name>_<KEY>=<value>` for
-each key in the entry's `options`. A site therefore carries any setting that
-BunkerWeb understands, without a change to this role. Add a third service in
-host vars:
+Every proxied site is an entry in `bunker_service_sites`, and the deployment
+sets the whole list. The template writes `<name>_<KEY>=<value>` for each key in
+the entry's `options`. A site therefore carries any setting that BunkerWeb
+understands, without a change to this role. A new service adds one entry:
 
 ```yaml
-bunker_service_extra_sites:
-  - name: immich.example.org
+  - name: "{{ immich_server_name }}"
     upstream: "http://{{ bunker_service_host_loopback_address }}:8082"
     options:
       REVERSE_PROXY_WS: "yes"
@@ -164,21 +151,17 @@ bunker_service_extra_sites:
       - {url: /api/, rate: 30r/s}
 ```
 
-Four things to know:
+Three things to know:
 
-- Set `bunker_service_extra_sites`, never `bunker_service_sites`.
-  `vars/main.yml` computes the second one. If you replace it, you drop the
-  sites that are already there.
 - Option keys are BunkerWeb's own, and they are case sensitive. BunkerWeb
   ignores a key that it does not know. An option key must be upper case, and
   the deploy asserts that shape, so `max_client_size` fails the play. The
   assert does not know which keys BunkerWeb has. An option value must carry no
   newline and no `=`, or it writes a second, global setting.
-- The settings above the per-site block are global, and they apply to a new
-  site too: `LIMIT_REQ_RATE`, `USE_MODSECURITY`, the geo allowlist. Nextcloud's
-  rate-limit exceptions and its CRS plugin are per-site, and they do not apply.
-  A site sets its own exceptions with `limit_req_urls`, a list of `url` and
-  `rate` pairs beside `options`.
+- The settings above the per-site block are global, and they apply to every
+  site: `LIMIT_REQ_RATE`, `USE_MODSECURITY`, the geo allowlist. A site sets its
+  own exceptions with `limit_req_urls`, a list of `url` and `rate` pairs beside
+  `options`.
 - The name is a hostname and becomes a multisite key prefix. A name with a
   space, an `=` or a `/` makes BunkerWeb read the line as a different setting.
   The site then silently loses all of its own settings. The deploy refuses such

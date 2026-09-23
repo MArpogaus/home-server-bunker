@@ -2,6 +2,7 @@
 - name: Assert the site and certificate settings make sense
   ansible.builtin.assert:
     that:
+      - bunker_service_sites | default([]) | length > 0
       - bunker_service_sites | map(attribute='name') | reject('match', '^[A-Za-z0-9.-]+$') | list | length == 0
       - bunker_service_sites | map(attribute='name') | list | length
         == bunker_service_sites | map(attribute='name') | unique | list | length
@@ -9,9 +10,10 @@
       - bunker_service_site_option_values | select('search', '[\\n\\r=]') | list | length == 0
       - not (bunker_service_auto_lets_encrypt | bool and bunker_service_generate_self_signed_ssl | bool)
     fail_msg: >-
-      A site name is a hostname and appears once, an option key is upper case,
+      The deployment sets bunker_service_sites, a site name is a hostname and
+      appears once, an option key is upper case,
       an option value carries no newline or `=`, and Let's Encrypt and the
-      self-signed certificate exclude each other. README.md, "Adding a site".
+      self-signed certificate exclude each other. README.md, "Sites".
     quiet: true
   vars:
     bunker_service_site_option_keys: >-
