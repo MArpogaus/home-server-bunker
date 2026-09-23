@@ -6,7 +6,7 @@ firewall and bans a client that misbehaves.
 
 Each site it serves is one entry in `bunker_service_sites`, which the
 deployment sets. The role names no service.
-`home-server-core` prepares the host.
+`home-server` prepares the host.
 
 ## Architecture
 
@@ -68,7 +68,7 @@ reverse lookup.
 
 ### The ntfy site
 
-`home-server-deploy/inventory/group_vars/homeserver.yml` sets two sites:
+`home-server/inventory/group_vars/homeserver.yml` sets two sites:
 Nextcloud and ntfy. Alerts must reach the phone while it is away from home, so
 ntfy gets a site of its own, and not a path under Nextcloud. ntfy serves its API
 and its web app from the root, and does not work under a subpath. Its hostname,
