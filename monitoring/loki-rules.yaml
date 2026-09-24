@@ -13,7 +13,7 @@ groups:
           severity: warning
         annotations:
           summary: "BunkerWeb logged a critical error"
-          description: "Read `journalctl _UID=$(id -u bunker) -p err` on the host."
+          description: "Read `run0 journalctl _UID=$(id -u bunker)` on the host."
 
       - alert: BunkerWebBanSpike
         expr: |
