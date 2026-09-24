@@ -1011,7 +1011,7 @@
       },
       "targets": [
         {
-          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p50\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p50\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "A",
@@ -1021,7 +1021,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p95\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | rt != \"-\" | unwrap rt | __error__=\"\" [$__auto]) by (), \"series\", \"total p95\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "B",
@@ -1031,7 +1031,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "C",
@@ -1041,7 +1041,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "D",
@@ -1087,7 +1087,7 @@
           "sort": "desc"
         }
       },
-      "description": "Total is the time BunkerWeb spends on a request, upstream the part Nextcloud or ntfy takes. The gap is the WAF and TLS.",
+      "description": "Total is the time BunkerWeb spends on a request, upstream the part Nextcloud or ntfy takes. The gap is the WAF and TLS. Websockets (status 101) stay open for hours and are left out.",
       "id": 28
     },
     {
