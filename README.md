@@ -229,6 +229,13 @@ TLS works only after the DNS record resolves from the internet.
 The contract is in `home-server-template/README.md`. The role templates
 `bunker.pod.j2`, because it carries the host loopback address.
 
+## LLM coding tools
+
+This project is developed with LLM-based coding tools. They write most of the
+code and documentation. The maintainer sets the goals and the design, reviews
+every change and is responsible for it. Changes are tested on a VM before they
+reach a host.
+
 ## License
 
 MIT
