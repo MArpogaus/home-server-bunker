@@ -1,0 +1,21 @@
+---
+# bunker_service_sites has no default: README.md, "Sites".
+bunker_service_nginx_image: "docker.io/bunkerity/bunkerweb:1.6.15"
+bunker_service_scheduler_image: "docker.io/bunkerity/bunkerweb-scheduler:1.6.15"
+
+# Mapped to the host loopback by --map-host-loopback in bunker.pod.
+bunker_service_host_loopback_address: "169.254.1.3"
+
+bunker_service_dns_resolvers: "169.254.1.1"
+
+bunker_service_whitelist_country: "DE CH AT"
+bunker_service_whitelist_ip: "127.0.0.1"
+
+bunker_service_use_modsecurity: "yes"
+bunker_service_modsecurity_sec_rule_engine: "On"
+bunker_service_limit_req_rate: "3r/s"
+
+bunker_service_auto_lets_encrypt: "yes"
+bunker_service_letsencrypt_email: ""
+bunker_service_generate_self_signed_ssl: "no"
+bunker_service_log_level: "notice"
