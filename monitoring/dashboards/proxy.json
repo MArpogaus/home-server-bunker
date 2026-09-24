@@ -488,7 +488,7 @@
           "fields": ""
         }
       },
-      "description": "Error and critical lines from both containers.",
+      "description": "Critical nginx lines and scheduler errors from both containers.",
       "id": 27
     },
     {

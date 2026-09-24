@@ -55,8 +55,7 @@ An entry has a `name` (the hostname), an `upstream` URL, `options` and
 - `LIMIT_REQ_RATE`, `USE_MODSECURITY` and the geo allowlist are global. A site
   overrides them in `options` or `limit_req_urls`.
 - Each site needs a public DNS record, because BunkerWeb requests its
-  certificate. For the same reason the proxy, not the service repository, holds
-  the site settings.
+  certificate.
 
 ## Specifics
 
