@@ -131,7 +131,7 @@
           "fields": ""
         }
       },
-      "description": "Blackbox probe from this host through the public path: DNS, TLS (validated), BunkerWeb and the backend. PublicUrlDown fires after 5 min.",
+      "description": "Blackbox probe of each public URL through DNS, TLS, BunkerWeb and the backend.",
       "id": 2
     },
     {
@@ -198,7 +198,7 @@
           "fields": ""
         }
       },
-      "description": "Shortest remaining validity over all probed sites. Let's Encrypt renews at 30 days; CertificateExpiresSoon fires below 14.",
+      "description": "Shortest remaining certificate validity of all probed sites.",
       "id": 3
     },
     {
@@ -255,7 +255,7 @@
           "fields": ""
         }
       },
-      "description": "Average over the last hour, both sites, without BunkerWeb's own health checks.",
+      "description": "Average over the last hour, without the health checks of BunkerWeb.",
       "id": 4
     },
     {
@@ -312,7 +312,7 @@
           "fields": ""
         }
       },
-      "description": "Distinct client addresses in the last hour. Includes scanners.",
+      "description": "Distinct client addresses in the last hour, scanners included.",
       "id": 5
     },
     {
@@ -370,7 +370,7 @@
           "fields": ""
         }
       },
-      "description": "Server errors answered to clients in the last hour. Zero is right; 502 means the backend pod was down.",
+      "description": "Server errors in the last hour; 502 means that the backend pod was down.",
       "id": 6
     },
     {
@@ -427,7 +427,7 @@
           "fields": ""
         }
       },
-      "description": "Clients BunkerWeb banned for 24 h after too many 4xx in a minute (the site's BAD_BEHAVIOR_THRESHOLD option). See the log panel for the addresses.",
+      "description": "Clients that BunkerWeb banned for too many bad status codes in a minute.",
       "id": 7
     },
     {
@@ -488,7 +488,7 @@
           "fields": ""
         }
       },
-      "description": "Error and critical lines from both containers. Critical lines and scheduler [ERROR] lines raise BunkerWebError.",
+      "description": "Error and critical lines from both containers.",
       "id": 27
     },
     {
@@ -582,7 +582,7 @@
           "sort": "none"
         }
       },
-      "description": "One band per probed URL, once a minute. A gap means the probe itself did not run; red means DNS, TLS, the WAF or the backend failed.",
+      "description": "One band per probed URL; red means that DNS, TLS, the WAF or the backend failed.",
       "id": 9
     },
     {
@@ -649,7 +649,7 @@
           "sort": "desc"
         }
       },
-      "description": "Access-log lines per interval per server name. The ntfy site is the phone polling, and everything else is Nextcloud. The legend column is the total over the selected range.",
+      "description": "Access-log lines per interval and site.",
       "id": 10
     },
     {
@@ -777,7 +777,7 @@
           "sort": "desc"
         }
       },
-      "description": "2xx ok, 3xx redirects (HTTP to HTTPS, login), 4xx client errors and WAF denials, 5xx backend errors. Counted per interval, so the bar height is what happened in that bar.",
+      "description": "Responses per interval by status class.",
       "id": 11
     },
     {
@@ -929,7 +929,7 @@
           "sort": "desc"
         }
       },
-      "description": "Every refusal by the check that made it: country (the geo allowlist), dnsbl (a public blocklist), blacklist (BunkerWeb's own), modsecurity (a CRS rule), ban (the client was already blocked). A burst from one address ends in a ban.",
+      "description": "Refusals by the check that made them: country, dnsbl, blacklist, modsecurity or ban.",
       "id": 12
     },
     {
@@ -993,7 +993,7 @@
           "sort": "desc"
         }
       },
-      "description": "Full request time of the blackbox probe including DNS and TLS handshake, once a minute. A step up means the backend or the WAF got slower.",
+      "description": "Full request time of the blackbox probe, DNS and TLS included.",
       "id": 13
     },
     {
@@ -1087,7 +1087,7 @@
           "sort": "desc"
         }
       },
-      "description": "Total is the time BunkerWeb spends on a request, upstream the part Nextcloud or ntfy takes. The gap is the WAF and TLS. Websockets (status 101) stay open for hours and are left out.",
+      "description": "Time per request in BunkerWeb and in the upstream, without websockets.",
       "id": 28
     },
     {
@@ -1153,7 +1153,7 @@
           "sort": "desc"
         }
       },
-      "description": "Share of answers with a 5xx status. BunkerWeb5xx alerts above 5 % over 10 minutes with at least 50 requests.",
+      "description": "Share of 5xx answers per site.",
       "id": 29
     },
     {
@@ -1237,7 +1237,7 @@
           "show": false
         }
       },
-      "description": "Addresses with the most requests in the dashboard range. Own devices sit on top; a stranger with thousands of hits is a scanner.",
+      "description": "Addresses with the most requests in the dashboard range.",
       "transformations": [
         {
           "id": "organize",
@@ -1322,7 +1322,7 @@
           "show": false
         }
       },
-      "description": "Most requested paths across both sites.",
+      "description": "Most requested paths of all sites.",
       "transformations": [
         {
           "id": "organize",
@@ -1407,7 +1407,7 @@
           "show": false
         }
       },
-      "description": "mirall is the Nextcloud desktop client; DAVx5 and Thunderbird sync calendars and contacts.",
+      "description": "Most frequent user agents; mirall is the Nextcloud desktop client.",
       "transformations": [
         {
           "id": "organize",
@@ -1477,7 +1477,7 @@
           "show": false
         }
       },
-      "description": "OWASP CRS rule ids over the dashboard range. 930130 is scanners probing /.env and friends; 920440 a blocked file extension; 949110 the anomaly-score block itself.",
+      "description": "OWASP CRS rule ids that matched in the dashboard range.",
       "transformations": [
         {
           "id": "organize",
@@ -1617,7 +1617,7 @@
           "show": false
         }
       },
-      "description": "Addresses BunkerWeb banned in the dashboard range, and how often. A ban lasts 24 h; `bwcli unban <ip>` in the scheduler container lifts one early.",
+      "description": "Addresses that BunkerWeb banned in the dashboard range, and how often.",
       "transformations": [
         {
           "id": "organize",
@@ -1757,7 +1757,7 @@
           "show": false
         }
       },
-      "description": "PROPFIND and REPORT are WebDAV/CalDAV clients syncing.",
+      "description": "Requests per site and HTTP method; PROPFIND and REPORT are WebDAV and CalDAV sync.",
       "transformations": [
         {
           "id": "organize",
@@ -1827,7 +1827,7 @@
           "show": false
         }
       },
-      "description": "Each address with the status codes it received, over the dashboard range, biggest pair first. Click the status column to sort by code and read who caused the 403s or the 404s. Own devices fill the 2xx rows. The 30 largest pairs only: LogQL has no top-k per group, and Loki refuses a query above 5000 series.",
+      "description": "The 30 largest pairs of client address and status code in the dashboard range.",
       "transformations": [
         {
           "id": "organize",
@@ -1912,7 +1912,7 @@
           "show": false
         }
       },
-      "description": "Paths answered 403, 429 or 444: what scanners and blocked clients ask for.",
+      "description": "Paths answered 403, 429 or 444.",
       "transformations": [
         {
           "id": "organize",
@@ -1989,7 +1989,7 @@
         "enableLogDetails": true,
         "prettifyLogMessage": false
       },
-      "description": "Every refused request and every ban, newest first. If your own address appears, `bwcli unban <ip>` in the bunker-scheduler container lifts it.",
+      "description": "Every refused request and every ban, newest first.",
       "id": 25
     },
     {
@@ -2039,7 +2039,7 @@
         "enableLogDetails": true,
         "prettifyLogMessage": false
       },
-      "description": "Error, critical and certificate lines from both containers. Critical lines and scheduler [ERROR] lines raise BunkerWebError. CertificateExpiresSoon watches the served certificate itself.",
+      "description": "Error, critical and certificate lines from both containers.",
       "id": 26
     }
   ]
