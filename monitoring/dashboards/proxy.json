@@ -1087,7 +1087,7 @@
           "sort": "desc"
         }
       },
-      "description": "Total is the time BunkerWeb spends on a request, upstream the part Nextcloud or ntfy takes. The gap is the WAF and TLS.",
+      "description": "Total is the time BunkerWeb spends on a request, upstream the part Nextcloud or ntfy takes. The gap is the WAF and TLS. Websockets (status 101) stay open for hours and are left out.",
       "id": 28
     },
     {
