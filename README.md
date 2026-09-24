@@ -64,7 +64,7 @@ An entry has a `name` (the hostname), an `upstream` URL, `options` and
 - `LOG_FORMAT` adds `$request_time` and `$upstream_response_time` to the image
   default. It writes `-` for the user and the referer, which can carry a share
   token. The dashboard parses this format. The query string stays, so
-  `monitoring/alloy-redact.txt` redacts ntfy's `auth=` credential.
+  `monitoring/alloy-redact.txt` redacts every query value, in every line.
 - The error and ban rules match only lines that start with nginx's own
   timestamp and level. An access line starts with the client's `Host` header,
   so a match anywhere in the line lets a client raise an alert.
