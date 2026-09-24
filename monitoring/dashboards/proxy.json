@@ -1153,7 +1153,7 @@
           "sort": "desc"
         }
       },
-      "description": "Share of answers with a 5xx status. Proxy5xx alerts above 5 % over 10 minutes with at least 50 requests.",
+      "description": "Share of answers with a 5xx status. BunkerWeb5xx alerts above 5 % over 10 minutes with at least 50 requests.",
       "id": 29
     },
     {

@@ -25,7 +25,7 @@ groups:
         annotations:
           summary: "BunkerWeb banned {{ $value }} clients in an hour"
 
-      - alert: Proxy5xx
+      - alert: BunkerWeb5xx
         expr: |
           (
             sum by (host) (count_over_time({service="bunker", container="bunker-nginx"}
