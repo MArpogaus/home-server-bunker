@@ -4,10 +4,14 @@ groups:
     rules:
       - alert: BunkerWebError
         expr: |
-          sum(count_over_time(
-            {service="bunker", container=~"bunker-.*"}
-              |~ "\\[(crit|alert|emerg)\\]|\\[ERROR\\]" [5m]
-          )) > 0
+          (sum(count_over_time(
+            {service="bunker", container="bunker-nginx"}
+              |~ `^\d{4}/\d\d/\d\d \d\d:\d\d:\d\d \[(crit|alert|emerg)\] ` [5m]
+          )) or vector(0))
+          + (sum(count_over_time(
+            {service="bunker", container="bunker-scheduler"} |= "[ERROR]" [5m]
+          )) or vector(0))
+          > 0
         for: 1m
         labels:
           severity: warning
@@ -18,7 +22,8 @@ groups:
       - alert: BunkerWebBanSpike
         expr: |
           sum(count_over_time(
-            {service="bunker", container="bunker-nginx"} |= "[BADBEHAVIOR]" |= "is banned for" [1h]
+            {service="bunker", container="bunker-nginx"}
+              |~ `^\d{4}/\d\d/\d\d \d\d:\d\d:\d\d \[[a-z]+\] \d+#\d+: \*\d+ \[BADBEHAVIOR\] IP \S+ is banned for` [1h]
           )) > 20
         labels:
           severity: warning

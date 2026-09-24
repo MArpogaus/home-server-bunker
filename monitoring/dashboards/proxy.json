@@ -388,7 +388,7 @@
       },
       "targets": [
         {
-          "expr": "sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"[BADBEHAVIOR]\" |= \"is banned for\" [24h])) or vector(0)",
+          "expr": "sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ \\[BADBEHAVIOR\\] IP \\S+ is banned for` [24h])) or vector(0)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -445,7 +445,7 @@
       },
       "targets": [
         {
-          "expr": "sum(count_over_time({service=\"bunker\", container=~\"bunker-.*\"} |~ \"\\\\[(crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]\" [24h])) or vector(0)",
+          "expr": "(sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[(crit|alert|emerg)\\] ` [24h])) or vector(0)) + (sum(count_over_time({service=\"bunker\", container=\"bunker-scheduler\"} |= \"[ERROR]\" [24h])) or vector(0))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -795,7 +795,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__auto]))",
+          "expr": "sum by (reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ \\[ACCESS\\] denied access from` | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__auto]))",
           "legendFormat": "{{reason}}",
           "queryType": "range",
           "refId": "A",
@@ -805,7 +805,7 @@
           }
         },
         {
-          "expr": "label_replace(sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__auto])), \"series\", \"new bans\", \"\", \"\")",
+          "expr": "label_replace(sum(count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ \\[BADBEHAVIOR\\] IP \\S+ is banned for` | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__auto])), \"series\", \"new bans\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "C",
@@ -1439,7 +1439,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (id) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"ModSecurity\" | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
+          "expr": "topk(10, sum by (id) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ ModSecurity: ` | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1579,7 +1579,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"is banned for\" | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__range])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ \\[BADBEHAVIOR\\] IP \\S+ is banned for` | regexp `IP (?P<ip>[0-9a-fA-F.:]+) is banned for` [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1649,7 +1649,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (ip, reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |= \"denied access\" | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__range])))",
+          "expr": "topk(10, sum by (ip, reason) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ \\[ACCESS\\] denied access from` | regexp `denied access from (?P<reason>[a-z]+)` | regexp `client: (?P<ip>[0-9a-fA-F.:]+)` [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -1957,7 +1957,7 @@
       },
       "targets": [
         {
-          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ \"denied access|is banned for\"",
+          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ (\\[BADBEHAVIOR\\] IP \\S+ is banned for|\\[ACCESS\\] denied access from)`",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",
@@ -2007,7 +2007,7 @@
       },
       "targets": [
         {
-          "expr": "{service=\"bunker\", container=~\"bunker-.*\"} |~ \"\\\\[(error|crit|alert|emerg)\\\\]|\\\\[ERROR\\\\]|(?i)certbot|certificate\" != \"denied access\" != \"ModSecurity\"",
+          "expr": "{service=\"bunker\", container=~\"bunker-.*\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[(error|crit|alert|emerg)\\] |\\[ERROR\\]|(?i)certbot|certificate` != \"denied access\" != \"ModSecurity\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",
