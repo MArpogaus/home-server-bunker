@@ -71,7 +71,8 @@ An entry has a `name` (the hostname), an `upstream` URL, `options` and
 - BunkerNet is off, because it reports blocked requests to Bunkerity.
 - The ModSecurity audit log keeps parts `A`, `H` and `Z`: the rule messages
   without the request and response headers and bodies, which carry cookies,
-  `Authorization` and form passwords.
+  `Authorization` and form passwords. A rule message still quotes the value
+  that matched, so `monitoring/alloy-redact.txt` redacts it.
 - `DISABLE_DEFAULT_SERVER=yes` drops a request whose SNI matches no site.
 - The containers have no `HealthOnFailure=kill`: Podman accepts it only with a
   `HealthCmd`.

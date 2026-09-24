@@ -1,2 +1,6 @@
 # ntfy takes credentials as ?auth=<base64>, and the access log keeps the query.
 [?&]auth=([^&\s"]+)
+# ModSecurity rule messages quote the value that matched, which can be a
+# password or a cookie. These groups allow spaces: a matched value can hold them.
+\(Value: `([^']*)' \)
+Matched Data: (.+?) found within [A-Z_]+(?::[^:\]"]+)?: ([^"\]]+)
