@@ -427,7 +427,7 @@
           "fields": ""
         }
       },
-      "description": "Clients BunkerWeb banned for 24 h after too many 4xx in a minute (threshold in bunker_service_bad_behavior_threshold). See the log panel for the addresses.",
+      "description": "Clients BunkerWeb banned for 24 h after too many 4xx in a minute (the site's BAD_BEHAVIOR_THRESHOLD option). See the log panel for the addresses.",
       "id": 7
     },
     {
@@ -488,7 +488,7 @@
           "fields": ""
         }
       },
-      "description": "Error and critical lines from both containers. BunkerWebError alerts on each.",
+      "description": "Error and critical lines from both containers. Critical lines and scheduler [ERROR] lines raise BunkerWebError.",
       "id": 27
     },
     {
@@ -1827,7 +1827,7 @@
           "show": false
         }
       },
-      "description": "Each address with the status codes it received, over the dashboard range, biggest pair first. Click the status column to sort by code and read who caused the 403s or the 404s. Own devices fill the 2xx rows. The 30 largest pairs only: LogQL has no top-k per group, and Loki refuses a query above 500 series.",
+      "description": "Each address with the status codes it received, over the dashboard range, biggest pair first. Click the status column to sort by code and read who caused the 403s or the 404s. Own devices fill the 2xx rows. The 30 largest pairs only: LogQL has no top-k per group, and Loki refuses a query above 5000 series.",
       "transformations": [
         {
           "id": "organize",
@@ -2039,7 +2039,7 @@
         "enableLogDetails": true,
         "prettifyLogMessage": false
       },
-      "description": "Error, critical and certificate lines from both containers. Error lines raise BunkerWebError. CertificateExpiresSoon watches the served certificate itself.",
+      "description": "Error, critical and certificate lines from both containers. Critical lines and scheduler [ERROR] lines raise BunkerWebError. CertificateExpiresSoon watches the served certificate itself.",
       "id": 26
     }
   ]
