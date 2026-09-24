@@ -929,7 +929,7 @@
           "sort": "desc"
         }
       },
-      "description": "Refusals by the check that made them: country, dnsbl, blacklist, modsecurity or ban.",
+      "description": "Refusals by the check that made them: country, dnsbl, blacklist or ban.",
       "id": 12
     },
     {
@@ -1439,7 +1439,7 @@
       },
       "targets": [
         {
-          "expr": "topk(10, sum by (id) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ ModSecurity: ` | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
+          "expr": "topk(10, sum by (id) (count_over_time({service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[[a-z]+\\] \\d+#\\d+: \\*\\d+ (\\[client \\S+\\] )?ModSecurity: ` | regexp `\\[id \"(?P<id>\\d+)\"\\]` | id != \"\" [$__range])))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A",
@@ -2007,10 +2007,20 @@
       },
       "targets": [
         {
-          "expr": "{service=\"bunker\", container=~\"bunker-.*\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[(error|crit|alert|emerg)\\] |\\[ERROR\\]|(?i)certbot|certificate` != \"denied access\" != \"ModSecurity\"",
+          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d (\\[(error|crit|alert|emerg)\\] |\\[[a-z]+\\] \\d+#\\d+: .*(?i:certbot|certificate))` != \"denied access\" != \"ModSecurity\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          }
+        },
+        {
+          "expr": "{service=\"bunker\", container=\"bunker-scheduler\"} |~ `\\[ERROR\\]|(?i)certbot|certificate`",
+          "legendFormat": "",
+          "queryType": "range",
+          "refId": "B",
           "datasource": {
             "type": "loki",
             "uid": "loki"
