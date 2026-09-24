@@ -190,7 +190,7 @@ referer can carry a share link.
 |---|---|---|
 | `BunkerWebError` | warning | BunkerWeb logged `crit`, `alert`, `emerg` or `ERROR` |
 | `BunkerWebBanSpike` | warning | More than 20 bans in 1 h |
-| `Proxy5xx` | warning | More than 5 % of more than 50 requests to one site answer 5xx in 10 min |
+| `BunkerWeb5xx` | warning | More than 5 % of more than 50 requests to one site answer 5xx in 10 min |
 
 ## Operations
 

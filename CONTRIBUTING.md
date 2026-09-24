@@ -26,6 +26,9 @@ and `git push --follow-tags`. The `release` workflow turns every pushed tag into
 a GitHub release. GitHub writes its notes: the pull requests merged since the
 previous release and a link that compares the two tags.
 
+A tag names the BunkerWeb version that the release deploys, such as `1.6.15`. A
+later release on the same version adds a counter: `1.6.15-1`, `1.6.15-2`.
+
 ## House style
 
 A comment says why, never what. Longer reasoning belongs in the README of the

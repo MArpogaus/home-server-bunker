@@ -13,7 +13,7 @@ groups:
           severity: warning
         annotations:
           summary: "BunkerWeb logged a critical error"
-          description: "Read `journalctl _UID=$(id -u bunker) -p err` on the host."
+          description: "Read `run0 journalctl _UID=$(id -u bunker)` on the host."
 
       - alert: BunkerWebBanSpike
         expr: |
@@ -25,7 +25,7 @@ groups:
         annotations:
           summary: "BunkerWeb banned {{ $value }} clients in an hour"
 
-      - alert: Proxy5xx
+      - alert: BunkerWeb5xx
         expr: |
           (
             sum by (host) (count_over_time({service="bunker", container="bunker-nginx"}
