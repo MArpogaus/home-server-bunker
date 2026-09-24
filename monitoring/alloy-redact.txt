@@ -1,0 +1,2 @@
+# ntfy takes credentials as ?auth=<base64>, and the access log keeps the query.
+[?&]auth=([^&\s"]+)
