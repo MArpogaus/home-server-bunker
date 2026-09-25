@@ -2,6 +2,7 @@
 # which can carry a token or a credential (ntfy takes one as ?auth=).
 [?&][^=&\s"\\]+=([^&\s"\\]+)
 # ModSecurity rule messages quote the value that matched, which can be a
-# password or a cookie. These groups allow spaces: a matched value can hold them.
-\(Value: `([^']*)' \)
-Matched Data: (.+?) found within [A-Z_]+(?::[^:\]"]+)?: ([^"\]]+)
+# password or a cookie. Each group ends at the text ModSecurity writes after the
+# value, because the value can hold spaces, ' and ]; it writes " as \x22.
+\(Value: `(.*?)' \) \[file "
+Matched Data: (.*?) found within \S+: (.*?)"\]
