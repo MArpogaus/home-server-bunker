@@ -5,6 +5,5 @@ After=bunker-scheduler.service
 [Container]
 Image={{ bunker_service_nginx_image }}
 ContainerName=bunker-nginx
-Pod=bunker.pod
 EnvironmentFile=./configs/bunkerweb.env
 Memory=768M
