@@ -2007,7 +2007,7 @@
       },
       "targets": [
         {
-          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d (\\[(error|crit|alert|emerg)\\] |\\[[a-z]+\\] \\d+#\\d+: .*(?i:certbot|certificate))` != \"denied access\" != \"ModSecurity\"",
+          "expr": "{service=\"bunker\", container=\"bunker-nginx\"} |~ `^\\d{4}/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d \\[(error|crit|alert|emerg)\\] ` != \"denied access\" != \"ModSecurity\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A",
