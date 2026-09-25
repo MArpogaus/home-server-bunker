@@ -1,6 +1,6 @@
 # Every query value, in every line: the access logs keep the query string,
 # which can carry a token or a credential (ntfy takes one as ?auth=).
-[?&][^=&\s"]+=([^&\s"]+)
+[?&][^=&\s"\\]+=([^&\s"\\]+)
 # ModSecurity rule messages quote the value that matched, which can be a
 # password or a cookie. These groups allow spaces: a matched value can hold them.
 \(Value: `([^']*)' \)
