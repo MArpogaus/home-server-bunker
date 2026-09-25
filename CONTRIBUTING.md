@@ -13,7 +13,7 @@ pre-commit install --install-hooks -t pre-commit -t commit-msg -t pre-push
 
 Plain `pre-commit install` installs the pre-commit stage alone, and the commit
 message and branch hooks then do not run. CI runs the pre-commit stage hooks on
-a push and on a pull request.
+a push and on a pull request to `main` or `dev`.
 
 Every GitHub action is pinned to a commit SHA. Dependabot updates the actions
 and the hook revisions weekly against `dev`. `pinact run -u` updates and
@@ -41,6 +41,5 @@ short sentences, one meaning per word, and the condition before the command.
 - Ansible variables are `<role>_*`.
 - Renovate updates the container image tags in the role defaults, through the
   preset that `.github/renovate.json` extends.
-- This repository is checked out in `home-server/services/bunker`, where you work
-  on it. `home-server/CONTRIBUTING.md` says how a change reaches the pinned
-  version.
+- `home-server` checks this repository out at `services/bunker`. Work on it
+  there. `home-server/CONTRIBUTING.md` says how a change here reaches the pin.
