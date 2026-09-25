@@ -1031,7 +1031,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.5, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | label_format urt=`{{ trim .urt }}` | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p50\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "C",
@@ -1041,7 +1041,7 @@
           }
         },
         {
-          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
+          "expr": "label_replace(quantile_over_time(0.95, {service=\"bunker\", container=\"bunker-nginx\"} |~ `^[A-Za-z0-9.-]+ [0-9a-fA-F.:]+ - ` != \"bwapi\" | pattern `<site> <ip> - <_> - [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<ua>\" <rt> <urt>` | status =~ \"[0-9]+\" | status != \"101\" | label_format urt=`{{ trim .urt }}` | urt != \"-\" | unwrap urt | __error__=\"\" [$__auto]) by (), \"series\", \"upstream p95\", \"\", \"\")",
           "legendFormat": "{{series}}",
           "queryType": "range",
           "refId": "D",
