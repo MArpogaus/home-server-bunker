@@ -67,8 +67,8 @@ bunker_service_sites:
   its upstream `http://169.254.1.3:<port>`.
 - The template writes `<hostname>_<KEY>=<value>` for each option, so a site
   can carry any BunkerWeb setting. BunkerWeb ignores a key that it does not
-  know. The deploy asserts only upper-case keys and values without a newline
-  or `=`.
+  know. The deploy asserts upper-case keys, values without a newline or `=`,
+  and no option that sets a key the role keeps.
 - The deploy refuses a hostname that appears twice. Such a site loses its
   settings.
 - `LIMIT_REQ_RATE`, `USE_MODSECURITY` and the geo allowlist are global. A site
