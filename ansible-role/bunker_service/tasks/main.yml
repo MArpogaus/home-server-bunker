@@ -1,25 +1,46 @@
 ---
-- name: Assert the site and certificate settings make sense
+- name: Start the site list empty
+  ansible.builtin.set_fact:
+    bunker_service_site_list: []
+
+# A site exists while its service is deployed with a port and has a hostname.
+- name: Collect the sites of the deployed services
+  ansible.builtin.set_fact:
+    bunker_service_site_list: >-
+      {{ bunker_service_site_list + [item.value | combine({
+           'name': bunker_service_site_hostname,
+           'upstream': 'http://' ~ bunker_service_host_loopback_address ~ ':' ~ bunker_service_ports[item.key]})] }}
+  loop: "{{ bunker_service_sites | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: item.key in bunker_service_ports and bunker_service_site_hostname | length > 0
+  vars:
+    bunker_service_site_hostname: "{{ lookup('vars', item.key ~ '_service_hostname', default='') }}"
+
+- name: Assert the sites and settings make sense
   ansible.builtin.assert:
     that:
-      - bunker_service_sites | default([]) | length > 0
-      - bunker_service_sites | map(attribute='name') | reject('match', '^[A-Za-z0-9.-]+$') | list | length == 0
-      - bunker_service_sites | map(attribute='name') | list | length
-        == bunker_service_sites | map(attribute='name') | unique | list | length
-      - bunker_service_site_option_keys | reject('match', '^[A-Z0-9_]+$') | list | length == 0
-      - bunker_service_site_option_values | select('search', '[\\n\\r=]') | list | length == 0
-      - not (bunker_service_auto_lets_encrypt | bool and bunker_service_generate_self_signed_ssl | bool)
+      - bunker_service_site_list | length > 0
+      - bunker_service_site_list | map(attribute='name') | reject('match', '^[A-Za-z0-9.-]+$') | list | length == 0
+      - bunker_service_site_list | map(attribute='name') | unique | list | length == bunker_service_site_list | length
+      - bunker_service_setting_keys | reject('match', '^[A-Z0-9_]+$') | list | length == 0
+      - bunker_service_setting_values | select('search', '[\\n\\r=]') | list | length == 0
+      - bunker_service_site_option_keys | intersect(bunker_service_role_keys) | length == 0
     fail_msg: >-
-      The deployment sets bunker_service_sites, a site name is a hostname and
-      appears once, an option key is upper case,
-      an option value carries no newline or `=`, and Let's Encrypt and the
-      self-signed certificate exclude each other. home-server-bunker/README.md, "Sites".
+      At least one site has a deployed service and a hostname, a hostname appears
+      once, a setting key is upper case, a setting value carries no newline
+      or `=`, and no site option sets a key the role keeps
+      ({{ bunker_service_role_keys | join(', ') }}). home-server-bunker/README.md, "Sites".
     quiet: true
   vars:
+    bunker_service_settings: >-
+      {{ [bunker_service_config] + bunker_service_site_list | map(attribute='options', default={}) | list }}
+    bunker_service_setting_keys: "{{ bunker_service_settings | map('dict2items') | flatten | map(attribute='key') | list }}"
     bunker_service_site_option_keys: >-
-      {{ bunker_service_sites | map(attribute='options', default={}) | map('dict2items') | flatten | map(attribute='key') | list }}
-    bunker_service_site_option_values: >-
-      {{ bunker_service_sites | map(attribute='options', default={}) | map('dict2items') | flatten | map(attribute='value') | map('string') | list }}
+      {{ bunker_service_site_list | map(attribute='options', default={}) | map('dict2items') | flatten | map(attribute='key') | list }}
+    bunker_service_role_keys: "{{ bunker_service_fixed_config.keys() | list + ['REVERSE_PROXY_HOST', 'SELF_SIGNED_SSL_SUBJ'] }}"
+    bunker_service_setting_values: >-
+      {{ bunker_service_settings | map('dict2items') | flatten | map(attribute='value') | map('string') | list }}
 
 - name: Deploy the Quadlets
   ansible.builtin.import_role:

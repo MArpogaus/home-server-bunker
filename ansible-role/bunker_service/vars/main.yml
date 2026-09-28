@@ -1,0 +1,41 @@
+---
+bunker_service_config_defaults:
+  # Empty: no geo allowlist.
+  WHITELIST_COUNTRY: ""
+  WHITELIST_IP: 127.0.0.1
+  DNS_RESOLVERS: 169.254.1.1
+  USE_MODSECURITY: true
+  MODSECURITY_SEC_RULE_ENGINE: "On"
+  LIMIT_REQ_RATE: 3r/s
+  LOG_LEVEL: notice
+  USE_BUNKERNET: false
+  USE_CLIENT_CACHE: true
+  USE_GZIP: true
+
+# The role's own settings; they win over the config.
+bunker_service_fixed_config:
+  AUTO_LETS_ENCRYPT: "{{ bunker_service_certificates == 'letsencrypt' }}"
+  EMAIL_LETS_ENCRYPT: "{{ bunker_service_letsencrypt_email }}"
+  GENERATE_SELF_SIGNED_SSL: "{{ bunker_service_certificates == 'self-signed' }}"
+  SERVER_NAME: "{{ bunker_service_site_list | map(attribute='name') | join(' ') }}"
+  MULTISITE: true
+  SERVE_FILES: false
+  USE_REVERSE_PROXY: true
+  REVERSE_PROXY_URL: /
+  DISABLE_DEFAULT_SERVER: true
+  # README.md, "Specifics".
+  MODSECURITY_SEC_AUDIT_LOG_PARTS: AHZ
+  LOG_FORMAT: >-
+    $host $remote_addr - $request_id - [$time_local] "$request" $status $body_bytes_sent "-"
+    "$http_user_agent" $request_time $upstream_response_time
+
+bunker_service_ports: >-
+  {{ base_setup_services | selectattr('port', 'defined') | items2dict(key_name='name', value_name='port') }}
+
+bunker_service_memory_defaults:
+  nginx: 768M
+  scheduler: 512M
+
+quadlet_service_required:
+  bunker_service_certificates: '^(letsencrypt|self-signed)$'
+quadlet_service_memory: "{{ bunker_service_memory_defaults | combine(bunker_service_memory) }}"
