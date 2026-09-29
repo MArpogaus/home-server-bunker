@@ -112,7 +112,11 @@ bunker_service_sites:
 
 ## Alerts
 
-The dashboard follows `home-server-monitoring/README.md`, "Dashboards".
+The dashboard follows `home-server-monitoring/README.md`, "Dashboards". Every
+Loki query that reads a line with a client address extracts it as `ip`, so a
+filter on `ip` (the Filter field, or "Filter for value" in a table) narrows the
+whole dashboard to one client: its requests, bans, denials, errors and
+ModSecurity matches.
 
 | Alert | Severity | Fires when |
 |---|---|---|
