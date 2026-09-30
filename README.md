@@ -80,6 +80,9 @@ bunker_service_sites:
 
 - `USE_BUNKERNET` is off by default, because BunkerNet reports blocked
   requests to Bunkerity.
+- The whitelist holds `127.0.0.1` alone. BunkerWeb's default also admits
+  search engine crawlers by reverse DNS and Meta's network, and a whitelisted
+  client skips the geo allowlist, the rate limits and ModSecurity.
 - The pod keeps Podman's journald log driver, because the image links its logs
   to `/proc/1/fd/1` and `/proc/1/fd/2`. Every stderr line is therefore `err`.
 - `LOG_FORMAT` adds `$request_time` and `$upstream_response_time` to the image
