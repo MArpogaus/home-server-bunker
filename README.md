@@ -97,8 +97,6 @@ bunker_service_sites:
   `Authorization` and form passwords. A rule message still quotes the value
   that matched, so `monitoring/alloy-redact.txt` redacts it.
 - `DISABLE_DEFAULT_SERVER=yes` drops a request whose SNI matches no site.
-- The containers have no `HealthOnFailure=kill`: Podman accepts it only with a
-  `HealthCmd`.
 - A read-only mount inside `/etc/nginx` makes the scheduler's config push fail.
 - The Nextcloud site needs the CRS plugin `nextcloud-rule-exclusions`, or CRS
   blocks WebDAV verbs and large uploads. A client that gets 429 needs its path
