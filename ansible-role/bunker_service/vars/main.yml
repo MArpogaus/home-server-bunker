@@ -3,18 +3,13 @@
 bunker_service_host_loopback_address: "169.254.1.3"
 
 bunker_service_config_defaults:
-  # Empty: no geo allowlist.
-  WHITELIST_COUNTRY: ""
   WHITELIST_IP: 127.0.0.1
   # BunkerWeb whitelists search engine crawlers and Meta's network by default,
   # and a whitelisted client skips every check.
   WHITELIST_RDNS: ""
   WHITELIST_ASN: ""
   DNS_RESOLVERS: 169.254.1.1
-  USE_MODSECURITY: true
-  MODSECURITY_SEC_RULE_ENGINE: "On"
   LIMIT_REQ_RATE: 3r/s
-  LOG_LEVEL: notice
   USE_BUNKERNET: false
   USE_CLIENT_CACHE: true
   USE_GZIP: true
