@@ -4,8 +4,7 @@ bunker_service_host_loopback_address: "169.254.1.3"
 
 bunker_service_config_defaults:
   WHITELIST_IP: 127.0.0.1
-  # BunkerWeb whitelists search engine crawlers and Meta's network by default,
-  # and a whitelisted client skips every check.
+  # README.md, "Specifics": BunkerWeb's default whitelist skips every check.
   WHITELIST_RDNS: ""
   WHITELIST_ASN: ""
   DNS_RESOLVERS: 169.254.1.1
