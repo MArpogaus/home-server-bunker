@@ -9,9 +9,6 @@ bunker_service_sites: {}
 bunker_service_certificates: letsencrypt
 bunker_service_letsencrypt_email: ""
 
-# Mapped to the host loopback by --map-host-loopback in bunker.pod.
-bunker_service_host_loopback_address: "169.254.1.3"
-
 # BunkerWeb's global settings, merged over bunker_service_config_defaults in vars/main.yml.
 bunker_service_config: {}
 # Memory ceilings per container, merged over bunker_service_memory_defaults.

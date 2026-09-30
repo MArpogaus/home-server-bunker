@@ -35,7 +35,6 @@ hostname of its own.
 | `bunker_service_letsencrypt_email` | empty | ACME contact |
 | `bunker_service_config` | `{}` | BunkerWeb's global settings, merged over `bunker_service_config_defaults` |
 | `bunker_service_memory` | `{}` | Memory ceilings per container |
-| `bunker_service_host_loopback_address` | `169.254.1.3` | Host loopback as the pod sees it |
 | `bunker_service_nginx_image`, `bunker_service_scheduler_image` | see `defaults/main.yml` | The images; both keep the same tag |
 
 `bunker_service_config` takes BunkerWeb's own keys, such as
@@ -126,8 +125,7 @@ denials, errors and ModSecurity matches of that client.
 
 ## Role contract
 
-The contract is in `home-server-template/README.md`. The role templates
-`bunker.pod.j2`, because it carries the host loopback address.
+The contract is in `home-server-template/README.md`.
 
 ## LLM coding tools
 
