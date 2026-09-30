@@ -80,6 +80,9 @@ bunker_service_sites:
 
 - `USE_BUNKERNET` is off by default, because BunkerNet reports blocked
   requests to Bunkerity.
+- The whitelist holds `127.0.0.1` alone. BunkerWeb's default also admits
+  crawlers and link-preview bots by reverse DNS, and Meta's network. A
+  whitelisted client skips the geo allowlist, the rate limits and ModSecurity.
 - The pod keeps Podman's journald log driver, because the image links its logs
   to `/proc/1/fd/1` and `/proc/1/fd/2`. Every stderr line is therefore `err`.
 - `LOG_FORMAT` adds `$request_time` and `$upstream_response_time` to the image
@@ -94,8 +97,6 @@ bunker_service_sites:
   `Authorization` and form passwords. A rule message still quotes the value
   that matched, so `monitoring/alloy-redact.txt` redacts it.
 - `DISABLE_DEFAULT_SERVER=yes` drops a request whose SNI matches no site.
-- The containers have no `HealthOnFailure=kill`: Podman accepts it only with a
-  `HealthCmd`.
 - A read-only mount inside `/etc/nginx` makes the scheduler's config push fail.
 - The Nextcloud site needs the CRS plugin `nextcloud-rule-exclusions`, or CRS
   blocks WebDAV verbs and large uploads. A client that gets 429 needs its path
