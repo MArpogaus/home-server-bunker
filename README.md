@@ -42,15 +42,16 @@ hostname of its own.
 `WHITELIST_COUNTRY: DE CH AT` or `MODSECURITY_SEC_RULE_ENGINE: DetectionOnly`.
 `true` and `false` become `yes` and `no`; quote `On`, `Off` and a country code
 such as `NO`, because YAML reads them as booleans. The role keeps the
-certificate settings, `SERVER_NAME`, `MULTISITE`, `SERVE_FILES`, the reverse
-proxy switches, `DISABLE_DEFAULT_SERVER`, `LOG_FORMAT` and the audit log
-parts; neither the config nor a site's options can change them.
+certificate settings, `SERVER_NAME`, `MULTISITE`, `SERVE_FILES`,
+`USE_REVERSE_PROXY`, `REVERSE_PROXY_URL`, `REVERSE_PROXY_HOST`,
+`DISABLE_DEFAULT_SERVER`, `LOG_FORMAT` and the audit log parts. Neither the
+config nor a site's options can change them.
 
 ### Sites
 
-`bunker_service_sites` maps a service name to the settings of its site:
-`options`, BunkerWeb settings for this site, and `limit_req_urls`, a list of
-`url` and `rate` pairs.
+`bunker_service_sites` maps a service name to the settings of its site. A site
+takes `options`, its BunkerWeb settings, and `limit_req_urls`, a list of `url`
+and `rate` pairs.
 
 ```yaml
 bunker_service_sites:
@@ -63,8 +64,8 @@ bunker_service_sites:
 
 - The site exists while the service has an entry here, is in
   `base_setup_services` with a `port`, and `<name>_service_hostname` is not
-  empty. Its name is that hostname and
-  its upstream `http://169.254.1.3:<port>`.
+  empty. Its name is that hostname and its upstream
+  `http://169.254.1.3:<port>`. The deploy needs at least one site.
 - The template writes `<hostname>_<KEY>=<value>` for each option, so a site
   can carry any BunkerWeb setting. BunkerWeb ignores a key that it does not
   know. The deploy asserts upper-case keys, values without a newline or `=`,
@@ -89,8 +90,8 @@ bunker_service_sites:
 - The error and ban rules match only lines that start with nginx's own
   timestamp and level. An access line starts with the client's `Host` header,
   so a match anywhere in the line lets a client raise an alert.
-- The ModSecurity audit log keeps parts `A`, `H` and `Z`: the rule messages
-  without the request and response headers and bodies, which carry cookies,
+- The ModSecurity audit log keeps parts `A`, `H` and `Z`, the rule messages.
+  It drops the request and response headers and bodies, which carry cookies,
   `Authorization` and form passwords. A rule message still quotes the value
   that matched, so `monitoring/alloy-redact.txt` redacts it.
 - `DISABLE_DEFAULT_SERVER=yes` drops a request whose SNI matches no site.
@@ -105,18 +106,17 @@ bunker_service_sites:
   401 per collection before it authenticates.
 - The Nextcloud site sets `REFERRER_POLICY`, because BunkerWeb replaces the
   upstream's header.
-- ntfy has a site of its own, because it does not work under a subpath. Its
-  `deny-all` authorization is the only gate. ModSecurity is off there, because
-  the phone's polls match CRS rule 920440. 401 is no bad behaviour there,
-  because the phone answers a 401 challenge on every connection.
+- ModSecurity is off on the ntfy site, because the phone's polls match CRS
+  rule 920440. 401 is no bad behaviour there, because the phone answers a 401
+  challenge on every connection.
 
-## Alerts
+## Dashboard and alerts
 
 The dashboard follows `home-server-monitoring/README.md`, "Dashboards". Every
-Loki query that reads a line with a client address extracts it as `ip`, so a
-filter on `ip` (the Filter field, or "Filter for value" in a table) narrows the
-whole dashboard to one client: its requests, bans, denials, errors and
-ModSecurity matches.
+Loki query that reads a line with a client address extracts it as `ip`. A
+filter on `ip`, in the Filter field or with "Filter for value" in a table,
+narrows the whole dashboard to one client. It then shows the requests, bans,
+denials, errors and ModSecurity matches of that client.
 
 | Alert | Severity | Fires when |
 |---|---|---|
