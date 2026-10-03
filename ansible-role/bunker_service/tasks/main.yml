@@ -3,7 +3,8 @@
   ansible.builtin.set_fact:
     bunker_service_site_list: []
 
-# A site exists while its service is deployed with a port and has a hostname.
+# A site exists while its service has a hostname. The port test keeps a wrong
+# key away from bunker_service_ports[item.key], so the assert below can name it.
 - name: Collect the sites of the deployed services
   ansible.builtin.set_fact:
     bunker_service_site_list: >-
@@ -20,6 +21,7 @@
 - name: Assert the sites and settings make sense
   ansible.builtin.assert:
     that:
+      - bunker_service_sites.keys() | difference(bunker_service_ports.keys()) | length == 0
       - bunker_service_site_list | length > 0
       - bunker_service_site_list | map(attribute='name') | reject('match', '^[A-Za-z0-9.-]+$') | list | length == 0
       - bunker_service_site_list | map(attribute='name') | unique | list | length == bunker_service_site_list | length
@@ -27,7 +29,8 @@
       - bunker_service_setting_values | select('search', '[\\n\\r=]') | list | length == 0
       - bunker_service_site_option_keys | intersect(bunker_service_role_keys) | length == 0
     fail_msg: >-
-      At least one site has a deployed service and a hostname, a hostname appears
+      Every key of bunker_service_sites names a service of base_setup_services
+      with a port, at least one site has a hostname, a hostname appears
       once, a setting key is upper case, a setting value carries no newline
       or `=`, and no site option sets a key the role keeps
       ({{ bunker_service_role_keys | join(', ') }}). home-server-bunker/README.md, "Sites".
