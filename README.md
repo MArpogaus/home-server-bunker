@@ -61,10 +61,10 @@ bunker_service_sites:
       - {url: /remote.php/, rate: 8r/s}
 ```
 
-- The site exists while the service has an entry here, is in
-  `base_setup_services` with a `port`, and `<name>_service_hostname` is not
-  empty. Its name is that hostname and its upstream
-  `http://169.254.1.3:<port>`. The deploy needs at least one site.
+- Every key names a service of `base_setup_services` with a `port`; the
+  deploy refuses any other key. The site exists while
+  `<name>_service_hostname` is not empty. Its name is that hostname and its
+  upstream `http://169.254.1.3:<port>`. The deploy needs at least one site.
 - The template writes `<hostname>_<KEY>=<value>` for each option, so a site
   can carry any BunkerWeb setting. BunkerWeb ignores a key that it does not
   know. The deploy asserts upper-case keys, values without a newline or `=`,
