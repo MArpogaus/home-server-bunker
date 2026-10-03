@@ -3,7 +3,8 @@
   ansible.builtin.set_fact:
     bunker_service_site_list: []
 
-# A site exists while its service has a hostname.
+# A site exists while its service has a hostname. The port test keeps a wrong
+# key away from bunker_service_ports[item.key], so the assert below can name it.
 - name: Collect the sites of the deployed services
   ansible.builtin.set_fact:
     bunker_service_site_list: >-
