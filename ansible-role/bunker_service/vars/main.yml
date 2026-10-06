@@ -36,7 +36,9 @@ bunker_service_ports: >-
 bunker_service_memory_defaults:
   nginx: 768M
   scheduler: 512M
+bunker_service_cpu_defaults: {}
 
 quadlet_service_required:
   bunker_service_certificates: '^(letsencrypt|self-signed)$'
 quadlet_service_memory: "{{ bunker_service_memory_defaults | combine(bunker_service_memory) }}"
+quadlet_service_cpu: "{{ bunker_service_cpu_defaults | combine(bunker_service_cpu) }}"

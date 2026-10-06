@@ -13,3 +13,4 @@ bunker_service_letsencrypt_email: ""
 bunker_service_config: {}
 # Memory ceilings per container, merged over bunker_service_memory_defaults.
 bunker_service_memory: {}
+bunker_service_cpu: {}
