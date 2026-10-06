@@ -35,6 +35,7 @@ hostname of its own.
 | `bunker_service_letsencrypt_email` | empty | ACME contact |
 | `bunker_service_config` | `{}` | BunkerWeb's global settings, merged over `bunker_service_config_defaults` |
 | `bunker_service_memory` | `{}` | Memory ceilings per container |
+| `bunker_service_cpu` | `{}` | CPU quotas per container, such as `{scheduler: 50%}` |
 | `bunker_service_nginx_image`, `bunker_service_scheduler_image` | see `defaults/main.yml` | The images; both keep the same tag |
 
 `bunker_service_config` takes BunkerWeb's own keys, such as
