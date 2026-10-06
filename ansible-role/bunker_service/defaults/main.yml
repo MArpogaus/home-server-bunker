@@ -2,15 +2,11 @@
 bunker_service_nginx_image: "docker.io/bunkerity/bunkerweb:1.6.15"
 bunker_service_scheduler_image: "docker.io/bunkerity/bunkerweb-scheduler:1.6.15"
 
-# Site settings per service, keyed by the service name. README.md, "Sites".
 bunker_service_sites: {}
 
-# letsencrypt, or self-signed for a host without public DNS.
 bunker_service_certificates: letsencrypt
 bunker_service_letsencrypt_email: ""
 
-# BunkerWeb's global settings, merged over bunker_service_config_defaults in vars/main.yml.
 bunker_service_config: {}
-# Memory ceilings per container, merged over bunker_service_memory_defaults.
 bunker_service_memory: {}
 bunker_service_cpu: {}
