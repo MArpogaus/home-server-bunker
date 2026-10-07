@@ -121,7 +121,7 @@ denials, errors and ModSecurity matches of that client.
 
 | Alert | Severity | Fires when |
 |---|---|---|
-| `BunkerWebError` | warning | BunkerWeb logs `crit`, `alert`, `emerg` or `ERROR` |
+| `BunkerWebError` | warning | BunkerWeb logs `crit`, `alert`, `emerg` or `ERROR`; a TLS error that a client causes does not count |
 | `BunkerWebBanSpike` | warning | More than 20 bans in 1 h |
 | `BunkerWeb5xx` | warning | More than 5 % of more than 50 requests to one site answer 5xx in 10 min |
 
